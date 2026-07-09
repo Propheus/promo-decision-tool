@@ -1,0 +1,259 @@
+{
+    "store": {
+        "store_name": "Marco's Pizza",
+        "store_address": "28065 US-27, Dundee, FL 33838, USA",
+        "brand": "Marco's Pizza"
+    },
+    "as_of_date": "2026-05-12",
+    "window_end": "2026-05-26",
+    "by_date": [
+        {
+            "date": "2026-05-12",
+            "shifts": [
+                {
+                    "shift_name": "dinner",
+                    "start_hour": 16,
+                    "end_hour": 23,
+                    "key_signals": [
+                        "MLB – Toronto Blue Jays vs Tampa Bay Rays"
+                    ],
+                    "recommendations": [
+                        {
+                            "action": "Menu Emphasis",
+                            "quantity": null,
+                            "recommendation": "Push Pepperoni Magnifico XL ($23.99), CheezyBread ($6.49), Buffalo Wings 10-pc ($13.99), and Pepsi 2 Ltr ($3.50).",
+                            "business_reasoning": "Blue Jays vs Rays viewers order easy-to-share delivery food; this lineup lifts the ticket with a pizza, side, wings, and a 2L drink."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "date": "2026-05-13",
+            "shifts": [
+                {
+                    "shift_name": "dinner",
+                    "start_hour": 16,
+                    "end_hour": 23,
+                    "key_signals": [
+                        "MLB – Toronto Blue Jays vs Tampa Bay Rays"
+                    ],
+                    "recommendations": [
+                        {
+                            "action": "Menu Emphasis",
+                            "quantity": null,
+                            "recommendation": "Push Pepperoni Magnifico® (XL) ($23.99), CheezyBread ($6.49), Buffalo Wings 10-pc ($13.99), and Pepsi 2 Ltr ($3.5).",
+                            "business_reasoning": "MLB – Toronto Blue Jays vs Tampa Bay Rays draws sports fans ordering delivery; this combo boxes easily, travels well, and adds sides and drinks to raise ticket size."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "date": "2026-05-16",
+            "shifts": [
+                {
+                    "shift_name": "lunch",
+                    "start_hour": 10,
+                    "end_hour": 16,
+                    "key_signals": [
+                        "Dundee Farmer's Market",
+                        "FA Cup Final 2026",
+                        "Haines City Farmers Market"
+                    ],
+                    "recommendations": [
+                        {
+                            "action": "Staffing",
+                            "quantity": null,
+                            "recommendation": "Add 40.5% Makeline staffing and 40.5% Driver scheduling.",
+                            "business_reasoning": "Dundee Farmer's Market drives midday carryout and delivery; extra drivers absorb the rush while makeline protects pizza and bread throughput."
+                        },
+                        {
+                            "action": "Inventory",
+                            "quantity": null,
+                            "recommendation": "Increase inventory 47% for DOUGH BALLS, CHEESE, PEPPERONI/MEATS, WINGS.",
+                            "business_reasoning": "Dundee Farmer's Market boosts family orders for large pies and sides; prep dough 1–4h ahead, then stage cheese, pepperoni/meats, and wings."
+                        },
+                        {
+                            "action": "Menu Emphasis",
+                            "quantity": null,
+                            "recommendation": "Push Pepperoni Magnifico® XL ($23.99), CheezyBread ($6.49), Buffalo Wings 10-pc ($13.99), Pepsi 2 Ltr ($3.50).",
+                            "business_reasoning": "Dundee Farmer's Market brings carryout families; these boxed add-ons lift basket size and travel well for home meals after the market."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "date": "2026-05-17",
+            "shifts": [
+                {
+                    "shift_name": "lunch",
+                    "start_hour": 10,
+                    "end_hour": 16,
+                    "key_signals": [
+                        "Premier League – AFC Bournemouth vs Manchester City – Game on 2026-05-17",
+                        "Premier League – Arsenal vs Burnley – Game on 2026-05-17",
+                        "Premier League – Aston Villa vs Liverpool",
+                        "Premier League – Brentford vs Crystal Palace"
+                    ],
+                    "recommendations": []
+                },
+                {
+                    "shift_name": "dinner",
+                    "start_hour": 16,
+                    "end_hour": 23,
+                    "key_signals": [
+                        "Bok Tower Gardens Concert"
+                    ],
+                    "recommendations": [
+                        {
+                            "action": "Inventory",
+                            "quantity": null,
+                            "recommendation": "+1% inventory: DOUGH BALLS, CHEESE, PEPPERONI/MEATS, SAUCE.",
+                            "business_reasoning": "Bok Tower Gardens Concert lifts pizza demand — favor dough, cheese, pepperoni/meats, and sauce; dough needs 1–4h proof, so prep ahead before showtime."
+                        },
+                        {
+                            "action": "Menu Emphasis",
+                            "quantity": null,
+                            "recommendation": "Push Pepperoni Magnifico® (XL) ($23.99), CheezyBread ($6.49), and Pepsi 2 Ltr ($3.50) for concert orders.",
+                            "business_reasoning": "Bok Tower Gardens Concert brings families and groups ordering around the show — these easy-to-box items raise add-ons and keep dinner simple."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "date": "2026-05-22",
+            "shifts": [
+                {
+                    "shift_name": "dinner",
+                    "start_hour": 16,
+                    "end_hour": 23,
+                    "key_signals": [
+                        "NASCAR Truck Series - North Carolina Lottery 200",
+                        "MLB – New York Yankees vs Tampa Bay Rays – Game 1"
+                    ],
+                    "recommendations": []
+                }
+            ]
+        },
+        {
+            "date": "2026-05-23",
+            "shifts": [
+                {
+                    "shift_name": "lunch",
+                    "start_hour": 10,
+                    "end_hour": 16,
+                    "key_signals": [
+                        "Dundee Farmer's Market",
+                        "MLB – New York Yankees vs Tampa Bay Rays – Game 2"
+                    ],
+                    "recommendations": [
+                        {
+                            "action": "Staffing",
+                            "quantity": null,
+                            "recommendation": "Add +47% Makeline staffing and +47% Driver scheduling for Dundee Farmer's Market lunch pickup plus MLB game delivery rush.",
+                            "business_reasoning": "Dundee Farmer's Market drives carryout after shopping, while Yankees-Rays game viewers order delivery; driver coverage must lead to avoid late drops."
+                        },
+                        {
+                            "action": "Menu Emphasis",
+                            "quantity": null,
+                            "recommendation": "Push Pepperoni Magnifico® XL ($23.99), CheezyBread ($6.49), and Pepsi 2 Ltr ($3.50) as the core meal.",
+                            "business_reasoning": "Dundee Farmer's Market families and Yankees-Rays viewers want easy-to-box, shareable delivery food; this combo lifts order size with a drink and side."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "date": "2026-05-24",
+            "shifts": [
+                {
+                    "shift_name": "lunch",
+                    "start_hour": 10,
+                    "end_hour": 16,
+                    "key_signals": [
+                        "Orlando Pride at San Diego Wave",
+                        "NASCAR Cup Series Race",
+                        "F1 – Canadian Grand Prix 2026 (Race)"
+                    ],
+                    "recommendations": [
+                        {
+                            "action": "Menu Emphasis",
+                            "quantity": null,
+                            "recommendation": "Push Pepperoni Magnifico® XL ($23.99), XL NY Style Pizza ($17.98), CheezyBread ($6.49), Buffalo Wings 10-pc ($13.99), and Pepsi 2 Ltr ($3.5).",
+                            "business_reasoning": "Orlando Pride at San Diego Wave, NASCAR Cup Series Race, and F1 – Canadian Grand Prix 2026 attract couch viewers who order easy-to-box pizzas, wings, and drinks for group delivery."
+                        }
+                    ]
+                },
+                {
+                    "shift_name": "dinner",
+                    "start_hour": 16,
+                    "end_hour": 23,
+                    "key_signals": [
+                        "Sunday Funday at Lake Eva Park",
+                        "Bok Tower Gardens Concert"
+                    ],
+                    "recommendations": [
+                        {
+                            "action": "Staffing",
+                            "quantity": null,
+                            "recommendation": "Add +36% Makeline staffing and +36% Driver scheduling for dinner, prioritizing 19:00–22:00 delivery flow.",
+                            "business_reasoning": "Sunday Funday at Lake Eva Park drives evening delivery spikes — add drivers and makeline coverage so orders don’t back up when families head home."
+                        },
+                        {
+                            "action": "Menu Emphasis",
+                            "quantity": null,
+                            "recommendation": "Push Pepperoni Magnifico® XL ($23.99), CheezyBread ($6.49), and Pepsi 2 Ltr ($3.5) for easy dinner bundles.",
+                            "business_reasoning": "Sunday Funday at Lake Eva Park and Bok Tower Gardens Concert bring families and concert-goers heading home, who order boxable pizzas plus shareable sides."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "date": "2026-05-25",
+            "shifts": [
+                {
+                    "shift_name": "lunch",
+                    "start_hour": 10,
+                    "end_hour": 16,
+                    "key_signals": [
+                        "MLB – Baltimore Orioles vs Tampa Bay Rays – Game 1",
+                        "Memorial Day"
+                    ],
+                    "recommendations": []
+                }
+            ]
+        },
+        {
+            "date": "2026-05-26",
+            "shifts": [
+                {
+                    "shift_name": "dinner",
+                    "start_hour": 16,
+                    "end_hour": 23,
+                    "key_signals": [
+                        "MLB – Baltimore Orioles vs Tampa Bay Rays – Game 2"
+                    ],
+                    "recommendations": [
+                        {
+                            "action": "Inventory",
+                            "quantity": null,
+                            "recommendation": "+2.3% dough balls, cheese, pepperoni/meats, wings, sauce; prep dough 1–4h ahead.",
+                            "business_reasoning": "MLB – Baltimore Orioles vs Tampa Bay Rays – Game 2 brings delivery-heavy orders for pizza and sides; stock dough, cheese, pepperoni/meats, wings, and sauce for fast boxing."
+                        },
+                        {
+                            "action": "Menu Emphasis",
+                            "quantity": null,
+                            "recommendation": "Push Pepperoni Magnifico® (XL) ($23.99), CheezyBread ($6.49), and Pepsi 2 Ltr ($3.5).",
+                            "business_reasoning": "MLB – Baltimore Orioles vs Tampa Bay Rays – Game 2 suits sports fans ordering in; Pepperoni Magnifico® plus CheezyBread and Pepsi 2 Ltr builds an easy watch-party basket."
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "_cached": false
+}

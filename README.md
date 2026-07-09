@@ -53,16 +53,40 @@ The primary tool for selecting and analyzing weekly promotions against a baselin
 
 A variant of the promo decision tool tailored for event-driven traffic patterns. Uses the same store (#8606) and promo framework but layers in event context (local events, holidays, seasonal patterns) to adjust projected transaction volumes and promo effectiveness.
 
+**External data dependency:** This file loads `events_reco.json` (included in this repo) at runtime via `fetch('./events_reco.json')`. It contains upcoming event recommendations for the store window (as of 2026-05-12, through 2026-05-26) including shift-level traffic forecasts by date.
+
+> **Note:** Because it uses `fetch()`, this file must be served over HTTP — it cannot be opened as a plain `file://` URL. See Usage below.
+
+---
+
+## Files in this repo
+
+| File | Purpose |
+|------|---------|
+| `promo_decision.html` | Main weekly promo tool — fully self-contained, no external files |
+| `promo_events_decision.html` | Event-based variant — requires `events_reco.json` to be in the same directory |
+| `events_reco.json` | Event/traffic forecast data loaded by `promo_events_decision.html` |
+
 ---
 
 ## Usage
 
-1. Open either HTML file directly in a browser (Chrome/Edge/Firefox recommended).
-2. Select one or more promos using the toggle cards.
-3. Review the dashboard metrics — incremental revenue, promo cost, and projected profit/margin update live.
-4. Click **Export CSV** to download the full transaction-level detail for analysis.
+**`promo_decision.html`** — open directly in any browser, no server needed:
+```
+open promo_decision.html
+```
 
-No installation, build step, or internet connection required.
+**`promo_events_decision.html`** — requires a local HTTP server (due to the `fetch()` call):
+```bash
+# from the repo root:
+python3 -m http.server 8080
+# then open: http://localhost:8080/promo_events_decision.html
+```
+
+For both tools:
+1. Select one or more promos using the toggle cards.
+2. Review the dashboard metrics — incremental revenue, promo cost, and projected profit/margin update live.
+3. Click **Export CSV** to download the full transaction-level detail for analysis.
 
 ---
 

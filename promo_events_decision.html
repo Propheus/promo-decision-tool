@@ -1854,7 +1854,7 @@ async function loadEvents() {
 
   let data;
   try {
-    const res = await fetch('../events_reco.json');
+    const res = await fetch('./events_reco.json');
     data = await res.json();
   } catch(e) {
     data = EVENTS_INLINE;
