@@ -1,0 +1,2415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propheus — Promo Decision Flow · Store #8606</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#07080c;--s1:#0e0f14;--s2:#13151d;--s3:#1a1d28;
+  --line:#1e2235;--line2:#272c40;
+  --t1:#dde1ef;--t2:#7a8399;--t3:#3d4560;
+  --g:#00f0a8;--gb:rgba(0,240,168,.12);--go:rgba(0,240,168,.05);
+  --orange:#ff7240;--blue:#4d8aff;--yellow:#f5c842;--red:#ff4f6d;--purple:#8b6fff;
+  --mono:'IBM Plex Mono',monospace;
+  --head:'Space Grotesk',sans-serif;
+  --body:'DM Sans',sans-serif;
+}
+body{background:var(--bg);color:var(--t1);font-family:var(--body);min-height:100vh;overflow-x:hidden;}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:52px;border-bottom:1px solid var(--line);background:var(--s1);position:sticky;top:0;z-index:200;}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand-pulse{width:9px;height:9px;border-radius:50%;background:var(--g);box-shadow:0 0 10px var(--g);animation:glow 2s ease-in-out infinite;}
+@keyframes glow{0%,100%{box-shadow:0 0 10px var(--g)}50%{box-shadow:0 0 3px var(--g)}}
+.brand-name{font-family:var(--head);font-weight:700;font-size:17px;}
+.brand-name span{color:var(--t3);font-weight:400;}
+.store-chip{font-family:var(--mono);font-size:10px;color:var(--t2);background:var(--s2);border:1px solid var(--line2);padding:5px 12px;border-radius:4px;letter-spacing:.5px;}
+.live-tag{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--g);letter-spacing:1px;}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--g);animation:glow 1.4s ease-in-out infinite;}
+
+/* PROGRESS NAV */
+.progress-nav{position:sticky;top:52px;z-index:150;background:var(--s1);border-bottom:1px solid var(--line);padding:0 28px;display:flex;align-items:center;gap:0;}
+.pnav-step{display:flex;align-items:center;gap:8px;padding:12px 18px;font-family:var(--mono);font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--t3);cursor:default;position:relative;white-space:nowrap;}
+.pnav-step .pnum{width:20px;height:20px;border-radius:50%;border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;transition:all .3s;}
+.pnav-step.active{color:var(--g);}
+.pnav-step.active .pnum{border-color:var(--g);background:rgba(0,240,168,.1);color:var(--g);}
+.pnav-step.done{color:var(--t2);}
+.pnav-step.done .pnum{border-color:var(--g);background:var(--g);color:#000;}
+.pnav-arrow{color:var(--t3);font-size:12px;padding:0 4px;flex-shrink:0;}
+
+/* SCREENS */
+.screen{display:none;padding:28px 24px 60px;max-width:1160px;margin:0 auto;}
+.screen.active{display:block;}
+
+/* SECTION TITLE */
+.sec-title{font-family:var(--mono);font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--t3);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.sec-title::before,.sec-title::after{content:'';flex:1;height:1px;background:var(--line);}
+
+/* COMPETITOR GRID */
+.comp-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:22px;}
+.comp-card{background:var(--s1);border:1px solid var(--line);border-radius:10px;padding:12px 14px;position:relative;overflow:hidden;}
+.comp-brand-badge{font-family:var(--mono);font-size:8px;letter-spacing:1.2px;text-transform:uppercase;padding:2px 7px;border-radius:3px;display:inline-block;margin-bottom:8px;font-weight:600;}
+.comp-card-title{font-family:var(--head);font-size:11.5px;font-weight:600;line-height:1.35;margin-bottom:7px;color:var(--t1);}
+.comp-score-label{font-family:var(--mono);font-size:8px;color:var(--t3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px;}
+.comp-score{font-family:var(--mono);font-size:13px;font-weight:600;}
+
+/* REC GRID */
+.rec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;}
+.rec-card{background:var(--s1);border:1px solid var(--line);border-radius:12px;padding:16px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;user-select:none;}
+.rec-card::after{content:'';position:absolute;inset:0;border-radius:12px;border:2px solid transparent;transition:all .2s;pointer-events:none;}
+.rec-card.selected{border-color:rgba(0,240,168,.35);background:rgba(0,240,168,.03);box-shadow:0 0 0 1px rgba(0,240,168,.15) inset;}
+.rec-card.selected::after{border-color:rgba(0,240,168,.25);}
+.rec-card:hover{border-color:var(--line2);}
+.rec-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;}
+.rec-type-badge{font-family:var(--mono);font-size:7.5px;letter-spacing:1.2px;text-transform:uppercase;padding:2px 7px;border-radius:3px;font-weight:600;}
+.rec-type-badge.improved{background:rgba(77,138,255,.15);color:var(--blue);}
+.rec-type-badge.counter{background:rgba(255,114,64,.15);color:var(--orange);}
+.rc-checkbox{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--line2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:11px;}
+.rec-card.selected .rc-checkbox{border-color:var(--g);background:var(--g);color:#000;}
+.rec-card-title{font-family:var(--head);font-size:13px;font-weight:700;margin-bottom:4px;line-height:1.3;}
+.rec-counters{font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.5px;margin-bottom:8px;}
+.rec-price-row{display:flex;align-items:baseline;gap:8px;margin-bottom:3px;}
+.rec-price-new{font-family:var(--head);font-size:16px;font-weight:700;color:var(--g);}
+.rec-price-old{font-family:var(--mono);font-size:11px;color:var(--t3);text-decoration:line-through;}
+.rec-price-pct{font-family:var(--mono);font-size:10px;color:var(--orange);}
+.rec-txns{font-family:var(--mono);font-size:9px;color:var(--t2);margin-bottom:8px;}
+.rec-desc{font-size:11.5px;color:var(--t2);line-height:1.5;}
+.rec-actions-bar{display:flex;align-items:center;gap:12px;margin-top:4px;}
+.btn-primary{padding:11px 24px;border-radius:8px;border:none;background:var(--g);color:#000;font-family:var(--head);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.2px;}
+.btn-primary:hover:not(:disabled){background:#00d498;}
+.btn-primary:disabled{background:var(--line2);color:var(--t3);cursor:not-allowed;}
+.btn-secondary{padding:11px 20px;border-radius:8px;border:1px solid var(--line2);background:transparent;color:var(--t2);font-family:var(--head);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-secondary:hover{border-color:var(--t2);color:var(--t1);}
+.btn-outline-red{padding:11px 20px;border-radius:8px;border:1px solid var(--red);background:rgba(255,79,109,.08);color:var(--red);font-family:var(--head);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-outline-red:hover{background:rgba(255,79,109,.15);}
+.sel-count{font-family:var(--mono);font-size:11px;color:var(--t3);}
+
+/* SCREEN 2 — POS */
+.pos-wrap{display:flex;flex-direction:column;align-items:center;gap:32px;padding:40px 0;}
+.pos-nodes{display:flex;align-items:center;gap:0;position:relative;}
+.pos-node{display:flex;flex-direction:column;align-items:center;gap:10px;}
+.pos-node-icon{width:72px;height:72px;border-radius:16px;border:1.5px solid var(--line2);background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:30px;position:relative;}
+.pos-node-icon.propheus{border-color:rgba(0,240,168,.4);background:rgba(0,240,168,.06);box-shadow:0 0 24px rgba(0,240,168,.08);}
+.pos-node-label{font-family:var(--head);font-size:12px;font-weight:600;color:var(--t1);}
+.pos-node-sub{font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.5px;}
+.pos-connector{display:flex;align-items:center;width:180px;position:relative;margin:0 12px;}
+.pos-conn-line{height:2px;flex:1;background:var(--line2);position:relative;overflow:visible;}
+.pos-conn-anim{position:absolute;top:50%;left:0;transform:translateY(-50%);width:10px;height:10px;border-radius:50%;background:var(--g);box-shadow:0 0 8px var(--g);animation:travel 1.8s ease-in-out infinite;}
+@keyframes travel{0%{left:0;opacity:0;}10%{opacity:1;}90%{opacity:1;}100%{left:calc(100% - 10px);opacity:0;}}
+.pos-conn-arrow{color:var(--g);font-size:14px;margin-left:-2px;}
+.pos-log-wrap{width:100%;max-width:700px;}
+.pos-log-box{background:var(--s1);border:1px solid var(--line);border-radius:12px;padding:20px;font-family:var(--mono);font-size:12px;color:var(--t2);min-height:140px;line-height:2;position:relative;overflow:hidden;}
+.pos-log-line{opacity:0;transform:translateY(6px);transition:opacity .3s ease,transform .3s ease;}
+.pos-log-line.visible{opacity:1;transform:translateY(0);}
+.pos-log-line .log-ts{color:var(--t3);margin-right:10px;}
+.pos-log-line .log-ok{color:var(--g);}
+.pos-log-line .log-info{color:var(--blue);}
+.pos-stats-row{display:flex;gap:16px;width:100%;max-width:700px;opacity:0;transition:opacity .5s ease;}
+.pos-stats-row.visible{opacity:1;}
+.pos-stat-box{flex:1;background:var(--s1);border:1px solid var(--line);border-radius:10px;padding:16px;text-align:center;}
+.pos-stat-val{font-family:var(--head);font-size:22px;font-weight:700;margin-bottom:4px;}
+.pos-stat-lbl{font-family:var(--mono);font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;}
+.pos-cta{opacity:0;transition:opacity .5s ease;}
+.pos-cta.visible{opacity:1;}
+
+/* IMPACT CARDS */
+.impact-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;}
+.impact-cards-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
+.impact-cards-5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:22px;}
+.impact-card{background:var(--s1);border:1px solid var(--line);border-radius:10px;padding:16px;}
+.impact-card-val{font-family:var(--head);font-size:22px;font-weight:800;line-height:1;margin-bottom:5px;}
+.impact-card-lbl{font-family:var(--mono);font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;}
+/* REVENUE CHART */
+.chart-wrap{background:var(--s1);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:14px;}
+.chart-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.chart-title{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);}
+.chart-legend{display:flex;gap:16px;align-items:center;}
+.legend-item{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9px;color:var(--t3);}
+.legend-line{width:20px;height:2px;}
+/* PREVIEW TOGGLE */
+.preview-toggle-btn{display:flex;align-items:center;gap:8px;width:100%;background:var(--s2);border:1px solid var(--line2);color:var(--t2);font-family:var(--mono);font-size:9px;letter-spacing:.8px;text-transform:uppercase;padding:9px 14px;border-radius:8px;cursor:pointer;margin-bottom:0;transition:all .2s;text-align:left;}
+.preview-toggle-btn:hover{border-color:var(--t3);color:var(--t1);}
+.preview-toggle-arrow{transition:transform .2s;display:inline-block;}
+.preview-toggle-btn.open .preview-toggle-arrow{transform:rotate(90deg);}
+.preview-collapse{overflow:hidden;transition:max-height .3s ease;max-height:0;}
+.preview-collapse.open{max-height:9000px;}
+
+/* STACKED BAR CHART */
+.stacked-chart-legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;}
+.sc-leg-item{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;color:var(--t2);}
+.sc-leg-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+.sc-bars-area{display:flex;gap:0;margin-bottom:4px;}
+.sc-bar-col{display:flex;flex-direction:column;align-items:center;flex:1;}
+.sc-bar-stack{width:100%;position:relative;}
+.sc-bar-day{font-family:var(--mono);font-size:9px;color:var(--t2);margin-top:7px;text-align:center;letter-spacing:.3px;}
+.sc-bar-date{font-family:var(--mono);font-size:8px;color:var(--t3);text-align:center;margin-top:1px;}
+.sc-signal-section{margin:18px 0 14px;}
+.sc-signal-title{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);margin-bottom:8px;}
+.sc-signal-chips{display:flex;flex-wrap:wrap;gap:6px;}
+.sc-signal-chip{font-family:var(--mono);font-size:9px;padding:4px 9px;border-radius:4px;border:1px solid;white-space:nowrap;line-height:1.5;}
+.sc-txn-title{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);margin-bottom:10px;}
+
+/* TABLES */
+.txn-table-wrap{background:var(--s1);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:18px;}
+.txn-table-head{padding:12px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
+.txn-table-htitle{font-family:var(--head);font-size:13px;font-weight:700;}
+.txn-table-hmeta{font-family:var(--mono);font-size:9px;color:var(--t3);}
+.txn-table{width:100%;border-collapse:collapse;}
+.txn-table th{font-family:var(--mono);font-size:8.5px;letter-spacing:1px;text-transform:uppercase;color:var(--t3);padding:8px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap;}
+.txn-table td{padding:7px 12px;font-size:11.5px;border-bottom:1px solid var(--line);vertical-align:middle;}
+.txn-table tr:last-child td{border-bottom:none;}
+.txn-table tr.promo-row td{background:rgba(0,240,168,.03);}
+.txn-table tr.promo-row{border-left:2px solid var(--g);}
+.txn-table tr.new-txn-row td{background:rgba(77,138,255,.04);}
+.txn-table tr.new-txn-row{border-left:2px solid var(--blue);}
+.txn-id{font-family:var(--mono);font-size:10px;color:var(--t2);}
+.txn-sku{font-family:var(--head);font-size:11px;font-weight:600;}
+.promo-badge{font-family:var(--mono);font-size:7px;letter-spacing:.8px;background:var(--gb);color:var(--g);border:1px solid rgba(0,240,168,.25);padding:1px 5px;border-radius:3px;margin-left:5px;vertical-align:middle;text-transform:uppercase;}
+.new-badge{font-family:var(--mono);font-size:7px;letter-spacing:.8px;background:rgba(77,138,255,.15);color:var(--blue);border:1px solid rgba(77,138,255,.25);padding:1px 5px;border-radius:3px;margin-left:5px;vertical-align:middle;text-transform:uppercase;}
+.promo-price-cell{font-family:var(--mono);font-size:11px;color:var(--g);font-weight:600;}
+.dim-price{font-family:var(--mono);font-size:11px;color:var(--t3);}
+.review-actions{display:flex;gap:14px;align-items:center;justify-content:flex-end;}
+.orig-price-strike{font-family:var(--mono);font-size:10px;color:var(--t3);text-decoration:line-through;}
+.new-price-green{font-family:var(--mono);font-size:11px;color:var(--g);font-weight:600;}
+.saving-cell{font-family:var(--mono);font-size:10px;color:var(--orange);}
+
+/* SCREEN 4 */
+.success-banner{background:rgba(0,240,168,.07);border:1px solid rgba(0,240,168,.3);border-radius:12px;padding:20px 24px;margin-bottom:22px;display:flex;align-items:center;gap:16px;}
+.success-icon{width:44px;height:44px;border-radius:12px;background:rgba(0,240,168,.12);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.success-title{font-family:var(--head);font-size:17px;font-weight:700;color:var(--g);margin-bottom:3px;}
+.success-sub{font-size:13px;color:var(--t2);}
+.applied-badge{font-family:var(--mono);font-size:7px;background:rgba(0,240,168,.12);color:var(--g);border:1px solid rgba(0,240,168,.2);padding:1px 5px;border-radius:3px;text-transform:uppercase;white-space:nowrap;}
+.applied-actions{display:flex;gap:12px;align-items:center;margin-top:18px;}
+.btn-grey{padding:11px 20px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--t3);font-family:var(--head);font-size:13px;font-weight:600;cursor:not-allowed;opacity:.5;}
+.btn-outline-green{padding:11px 20px;border-radius:8px;border:1px solid rgba(0,240,168,.4);background:rgba(0,240,168,.05);color:var(--g);font-family:var(--head);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-outline-green:hover{background:rgba(0,240,168,.1);}
+
+/* DELTA BRIDGE */
+.delta-bridge{background:rgba(0,240,168,.04);border:1px solid rgba(0,240,168,.18);border-radius:12px;padding:16px 24px;margin:6px 0 20px;display:flex;align-items:center;justify-content:center;gap:32px;}
+.delta-bridge-arrow{font-size:22px;color:var(--g);flex-shrink:0;}
+.delta-stat{text-align:center;}
+.delta-stat-val{font-family:var(--head);font-size:16px;font-weight:800;line-height:1;margin-bottom:3px;}
+.delta-stat-lbl{font-family:var(--mono);font-size:8px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;}
+.delta-divider{width:1px;height:36px;background:var(--line2);flex-shrink:0;}
+
+/* TABLE SECTION HEADER */
+.tbl-sec-hdr{display:flex;align-items:center;gap:12px;margin:20px 0 10px;}
+.tbl-sec-hdr-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.tbl-sec-hdr-title{font-family:var(--head);font-size:13px;font-weight:700;}
+.tbl-sec-hdr-meta{font-family:var(--mono);font-size:9px;color:var(--t3);}
+
+/* EVENT CARDS */
+.event-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px;}
+.event-card{background:var(--s1);border:1px solid var(--line);border-radius:10px;padding:14px;position:relative;overflow:hidden;}
+.event-date-badge{font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--t3);text-transform:uppercase;margin-bottom:6px;}
+.event-name{font-family:var(--head);font-size:12px;font-weight:700;line-height:1.35;margin-bottom:6px;color:var(--t1);}
+.event-shift{font-family:var(--mono);font-size:8px;color:var(--t3);letter-spacing:.5px;margin-bottom:7px;}
+.event-actions{display:flex;flex-wrap:wrap;gap:4px;}
+.event-action-chip{font-family:var(--mono);font-size:8px;padding:2px 7px;border-radius:3px;border:1px solid;line-height:1.6;}
+.event-action-chip.staffing{background:rgba(255,114,64,.12);color:var(--orange);border-color:rgba(255,114,64,.3);}
+.event-action-chip.menu{background:rgba(77,138,255,.12);color:var(--blue);border-color:rgba(77,138,255,.3);}
+.event-action-chip.inventory{background:rgba(245,200,66,.12);color:var(--yellow);border-color:rgba(245,200,66,.3);}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-thumb{background:var(--line2);border-radius:3px;}
+
+/* FADE-IN */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.fadein{animation:fadeUp .35s ease both;}
+
+/* INFO ICON TOOLTIP */
+.info-wrap{position:relative;display:inline-flex;align-items:center;}
+.info-icon{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;border:1px solid var(--t3);color:var(--t3);font-family:var(--mono);font-size:8px;cursor:pointer;flex-shrink:0;transition:border-color .2s,color .2s;user-select:none;line-height:1;}
+.info-wrap:hover .info-icon{border-color:var(--g);color:var(--g);}
+.info-tip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--s3);border:1px solid var(--line2);border-radius:8px;padding:10px 14px;font-family:var(--mono);font-size:10px;color:var(--t2);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:400;line-height:1.8;text-align:left;}
+.info-tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--line2);}
+.info-wrap:hover .info-tip{opacity:1;}
+
+/* EVENT ACTION CARDS (Screen 1) */
+.ea-card{background:var(--s1);border:2px solid var(--line);border-radius:10px;padding:16px;cursor:pointer;transition:border-color .15s,background .15s;position:relative;display:flex;gap:14px;align-items:flex-start;}
+.ea-card:hover{border-color:var(--purple);background:rgba(139,111,255,.04);}
+.ea-card.selected{border-color:var(--purple);background:rgba(139,111,255,.08);}
+.ea-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;}
+.ea-icon.staffing{background:rgba(77,138,255,.15);}
+.ea-icon.menu{background:rgba(0,240,168,.1);}
+.ea-body{flex:1;}
+.ea-title{font-family:var(--head);font-size:13px;font-weight:700;color:var(--t1);margin-bottom:4px;}
+.ea-details{font-family:var(--mono);font-size:10px;color:var(--t2);margin-bottom:6px;line-height:1.6;letter-spacing:.2px;}
+.ea-impact{font-family:var(--mono);font-size:10px;color:var(--purple);}
+.ea-chk{width:18px;height:18px;border-radius:4px;border:2px solid var(--line2);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.ea-card.selected .ea-chk{background:var(--purple);border-color:var(--purple);color:#fff;font-size:11px;}
+
+/* EVENT PLAYBOOK PANEL */
+.ep-panel{background:var(--s1);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:24px;}
+.ep-tabs{display:flex;gap:6px;padding:12px 14px;background:var(--bg);border-bottom:1px solid var(--line);}
+.ep-tab{display:flex;align-items:center;gap:7px;padding:7px 16px;border-radius:999px;border:1px solid var(--line2);background:transparent;color:var(--t2);font-family:var(--body);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;}
+.ep-tab:hover{color:var(--t1);border-color:rgba(221,225,239,.35);}
+.ep-tab.active{background:var(--t1);color:#07080c;border-color:var(--t1);font-weight:600;}
+.ep-tab svg{width:14px;height:14px;flex-shrink:0;}
+.ep-content{display:none;padding:16px;flex-direction:column;gap:14px;}
+.ep-content.active{display:flex;}
+.ep-rec-card{background:var(--s2);border:1px solid var(--line2);border-radius:10px;padding:18px;}
+.ep-rec-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px;}
+.ep-rec-title{font-family:var(--head);font-size:15px;font-weight:700;color:var(--t1);line-height:1.3;}
+.ep-badge{font-family:var(--mono);font-size:10px;letter-spacing:.6px;padding:4px 10px;border-radius:6px;white-space:nowrap;flex-shrink:0;font-weight:500;}
+.ep-badge.staffing{background:rgba(77,138,255,.15);color:var(--blue);}
+.ep-badge.inventory{background:rgba(245,200,66,.12);color:var(--yellow);}
+.ep-badge.menu{background:rgba(0,240,168,.1);color:var(--g);}
+.ep-badge.briefing{background:rgba(139,111,255,.15);color:var(--purple);}
+.ep-signal{background:var(--s3);border-radius:8px;padding:12px 14px;margin-bottom:14px;}
+.ep-signal-label{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;margin-bottom:8px;}
+.ep-signal-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:5px;font-size:12px;color:var(--t2);line-height:1.45;}
+.ep-signal-item:last-child{margin-bottom:0;}
+.ep-signal-dot{width:6px;height:6px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:4px;}
+.ep-cmp{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:14px;}
+.ep-cmp-col{padding:14px;}
+.ep-cmp-col+.ep-cmp-col{border-left:1px solid var(--line);}
+.ep-cmp-label{font-family:var(--mono);font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;}
+.ep-cmp-label.bl{color:var(--t3);}
+.ep-cmp-label.af{color:var(--g);}
+.ep-mrow{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
+.ep-mrow:last-child{margin-bottom:0;}
+.ep-ml{flex:1;font-size:12px;color:var(--t2);}
+.ep-mv{font-family:var(--mono);font-size:12.5px;font-weight:500;}
+.ep-mv.bad{color:var(--orange);}
+.ep-mv.good{color:var(--g);}
+.ep-delta{font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:999px;white-space:nowrap;}
+.ep-delta.pos{background:rgba(0,240,168,.1);color:var(--g);}
+.ep-delta.neg{background:rgba(0,240,168,.1);color:var(--g);}
+.ep-delta.tag{background:rgba(0,240,168,.15);color:var(--g);border:1px solid rgba(0,240,168,.3);}
+.ep-evidence{background:var(--s3);border-left:3px solid var(--t3);border-radius:0 6px 6px 0;padding:10px 14px;font-size:12px;color:var(--t2);line-height:1.65;margin-bottom:12px;}
+.ep-evidence b{color:var(--t1);}
+.ep-source{font-family:var(--mono);font-size:10px;color:var(--t3);}
+.ep-brief-day{display:grid;grid-template-columns:90px 1fr auto;align-items:start;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);}
+.ep-brief-day:last-child{border-bottom:none;}
+.ep-brief-date{font-family:var(--mono);font-size:11px;color:var(--t2);}
+.ep-brief-events{font-size:12px;color:var(--t2);line-height:1.5;}
+.ep-brief-events b{color:var(--t1);}
+.ep-brief-impact{display:flex;flex-direction:column;gap:3px;align-items:flex-end;}
+.ep-impact-chip{font-family:var(--mono);font-size:9px;padding:2px 8px;border-radius:999px;white-space:nowrap;}
+.ep-impact-chip.high{background:rgba(0,240,168,.15);color:var(--g);border:1px solid rgba(0,240,168,.3);}
+.ep-impact-chip.med{background:rgba(245,200,66,.12);color:var(--yellow);}
+.ep-impact-chip.low{background:rgba(61,69,96,.4);color:var(--t3);}
+.ep-src{font-family:var(--mono);font-size:9px;color:var(--t3);display:block;margin-top:2px;}
+.ep-roi-row{display:flex;gap:12px;background:var(--s3);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin-bottom:12px;flex-wrap:wrap;}
+.ep-roi-item{display:flex;flex-direction:column;gap:3px;min-width:100px;}
+.ep-roi-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:var(--t3);}
+.ep-roi-val{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--t1);}
+.ep-toggle-btn{background:transparent;border:1px solid var(--line);color:var(--blue);font-family:var(--mono);font-size:11px;padding:6px 14px;border-radius:6px;cursor:pointer;transition:background .15s;}
+.ep-toggle-btn:hover{background:rgba(77,138,255,.08);}
+.promo-summary-card{background:var(--s2);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-bottom:4px;}
+.promo-summary-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.promo-summary-item{text-align:center;}
+.promo-summary-val{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--t1);margin-bottom:4px;}
+.promo-summary-lbl{font-size:11px;color:var(--t3);line-height:1.4;}
+/* ── POS DATA TABS (staffing / menu / promotions) ── */
+.pos-data-wrap{margin-top:12px;}
+.pos-tab-bar{display:flex;gap:6px;margin-bottom:10px;}
+.pos-tab{padding:9px 20px;border-radius:8px;border:1px solid var(--line2);background:var(--s3);color:var(--t2);font-family:var(--head);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;}
+.pos-tab.active{background:rgba(255,255,255,0.93);color:#0d0e12;border-color:rgba(255,255,255,0.4);}
+.txn-table tr.repriced-row td{background:rgba(245,200,66,.06);}
+.txn-table tr.repriced-row{border-left:2px solid rgba(245,200,66,.4);}
+#postabcon-promo-b .txn-table td:first-child,
+#postabcon-promo-a .txn-table td:first-child{padding-left:18px;}
+.pos-tab-content{display:none;}
+.pos-tab-content.active{display:block;}
+.pos-tbl{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:10.5px;}
+.pos-tbl thead tr{border-bottom:1px solid var(--line2);}
+.pos-tbl th{padding:5px 10px;text-align:left;text-transform:uppercase;letter-spacing:.8px;font-size:9px;color:var(--t3);}
+.pos-tbl th.r,.pos-tbl td.r{text-align:right;}
+.pos-tbl td{padding:7px 10px;color:var(--t1);border-bottom:1px solid rgba(255,255,255,.03);}
+.pos-tbl tr.pos-total td{border-top:1px solid var(--line2);font-weight:700;color:var(--t1);}
+.pos-tbl tr.pos-total td .pos-delta{font-family:var(--mono);font-size:9px;margin-left:6px;padding:2px 6px;border-radius:3px;}
+.pos-tbl tr.pos-total td .pos-delta.up{background:rgba(0,240,168,.15);color:var(--g);}
+.pos-tbl .pos-type-chip{font-family:var(--mono);font-size:9px;letter-spacing:.5px;padding:2px 7px;border-radius:3px;background:var(--s3);color:var(--t2);}
+.pos-tbl .pos-promo-badge{font-family:var(--mono);font-size:8px;letter-spacing:.8px;background:rgba(0,240,168,.15);color:var(--g);border:1px solid rgba(0,240,168,.25);padding:2px 7px;border-radius:3px;white-space:nowrap;}
+.pos-tbl tr.pos-highlight td{background:rgba(255,200,0,.04);}
+
+/* PROMO COMPARE CARD */
+.promo-compare-card{background:var(--s1);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:16px;}
+.promo-card-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line);}
+.promo-why-fired{padding:12px 20px;border-bottom:1px solid var(--line);background:var(--s2);}
+.promo-why-label{font-family:var(--mono);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:8px;}
+.promo-why-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:5px;font-size:12px;color:var(--t2);line-height:1.45;}
+.promo-why-item:last-child{margin-bottom:0;}
+.promo-why-dot{width:7px;height:7px;border-radius:50%;background:var(--orange);flex-shrink:0;margin-top:4px;}
+.promo-ba-grid{display:grid;grid-template-columns:1fr 1fr;}
+.promo-ba-before{padding:16px 20px;background:rgba(255,255,255,.015);border-right:1px solid var(--line);}
+.promo-ba-after{padding:16px 20px;background:rgba(0,60,20,.55);}
+.promo-ba-label{font-family:var(--mono);font-size:8.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);margin-bottom:14px;}
+.promo-ba-metric{margin-bottom:14px;}
+.promo-ba-metric:last-child{margin-bottom:0;}
+.promo-ba-mrow{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:3px;}
+.promo-ba-ml{font-size:13px;color:var(--t2);flex:1;}
+.promo-ba-mv{font-family:var(--mono);font-size:14px;font-weight:600;}
+.promo-ba-mv.bad{color:var(--orange);}
+.promo-ba-mv.good{color:var(--t1);}
+.promo-ba-src{font-family:var(--mono);font-size:9px;color:var(--t3);line-height:1.5;}
+.promo-ba-delta{font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--g);white-space:nowrap;}
+.ep-csv-chip{font-family:var(--mono);font-size:10px;background:var(--s3);border:1px solid var(--line2);color:var(--t2);padding:4px 10px;border-radius:4px;letter-spacing:.3px;}
+.promo-csv-chips{display:flex;flex-wrap:wrap;gap:6px;padding:12px 20px;border-top:1px solid var(--line);}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-pulse"></div>
+    <div class="brand-name">Propheus <span>/ Retail AI Platform</span></div>
+  </div>
+  <div class="store-chip">STORE #8606 · MARCO'S PIZZA · DUNDEE, FL · MAY 20, 2026</div>
+  <div class="live-tag"><div class="live-dot"></div>LIVE</div>
+</div>
+
+<!-- PROGRESS NAV -->
+<div class="progress-nav" id="progressNav">
+  <div class="pnav-step active" id="pnav1"><div class="pnum">1</div>Events &amp; Competitor Intel</div>
+  <div class="pnav-arrow">›</div>
+  <div class="pnav-step" id="pnav2"><div class="pnum">2</div>POS Integration</div>
+  <div class="pnav-arrow">›</div>
+  <div class="pnav-step" id="pnav3"><div class="pnum">3</div>Applied</div>
+</div>
+
+<!-- ═══════════ SCREEN 1 ═══════════ -->
+<div class="screen active" id="screen1">
+
+  <div class="sec-title">Upcoming Events — May 19–25, 2026</div>
+  <div class="event-grid" id="eventGrid"></div>
+
+  <div class="sec-title" style="margin-top:24px;">Event Action Recommendations — May 19–25, 2026</div>
+  <div id="eventActionGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px;"></div>
+
+  <div class="sec-title">Competitors Running These Promos · May 19–25, 2026</div>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div style="background:#E31837;position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:2px 0 0 2px;"></div>
+      <div class="comp-brand-badge" style="background:rgba(227,24,55,.15);color:#E31837;">Papa John's</div>
+      <div class="comp-card-title">XL New York Style Pizza</div>
+      <div class="comp-score-label">Threat Score</div>
+      <div class="comp-score" style="color:#ff7a8a;">76.98</div>
+    </div>
+    <div class="comp-card">
+      <div style="background:#E31837;position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:2px 0 0 2px;"></div>
+      <div class="comp-brand-badge" style="background:rgba(227,24,55,.15);color:#E31837;">Papa John's</div>
+      <div class="comp-card-title">Large 3-Topping Pizza</div>
+      <div class="comp-score-label">Threat Score</div>
+      <div class="comp-score" style="color:#ff7a8a;">78.71</div>
+    </div>
+    <div class="comp-card">
+      <div style="background:#E31837;position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:2px 0 0 2px;"></div>
+      <div class="comp-brand-badge" style="background:rgba(227,24,55,.15);color:#E31837;">Papa John's</div>
+      <div class="comp-card-title">PICK A SIDE / ANYSIDE</div>
+      <div class="comp-score-label">Threat Score</div>
+      <div class="comp-score" style="color:#ff7a8a;">82.00</div>
+    </div>
+    <div class="comp-card">
+      <div style="background:#006491;position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:2px 0 0 2px;"></div>
+      <div class="comp-brand-badge" style="background:rgba(0,100,145,.18);color:#4db8e8;">Domino's</div>
+      <div class="comp-card-title">3-Piece Chocolate Lava Crunch Cakes</div>
+      <div class="comp-score-label">Threat Score</div>
+      <div class="comp-score" style="color:#4db8e8;">95.00</div>
+    </div>
+    <div class="comp-card">
+      <div style="background:#006491;position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:2px 0 0 2px;"></div>
+      <div class="comp-brand-badge" style="background:rgba(0,100,145,.18);color:#4db8e8;">Domino's</div>
+      <div class="comp-card-title">Choose any 3 Dip Cups for $1.99</div>
+      <div class="comp-score-label">Threat Score</div>
+      <div class="comp-score" style="color:#4db8e8;">102.00</div>
+    </div>
+  </div>
+
+  <div class="sec-title">AI-Generated Counter-Recommendations</div>
+
+  <div class="rec-grid" id="recGrid">
+    <div class="rec-card" data-id="1" onclick="toggleRec(this)">
+      <div class="rec-card-top">
+        <div class="rec-type-badge improved">Improved Match</div>
+        <div class="rc-checkbox">✓</div>
+      </div>
+      <div class="rec-card-title">XL New York Style Pizza + 2 Drinks</div>
+      <div class="rec-counters">Counters Papa John's XL NY Style</div>
+      <div class="rec-price-row">
+        <span class="rec-price-new">$17.99</span>
+        <span class="rec-price-old">$22.98</span>
+        <span class="rec-price-pct">−21.71%</span>
+      </div>
+      <div class="rec-txns">110 eligible transactions (this week)</div>
+      <div class="rec-desc">Bundle XL NY Style with 2 drinks — counters Papa John's new NY Style launch at same price with better value.</div>
+    </div>
+
+    <div class="rec-card" data-id="2" onclick="toggleRec(this)">
+      <div class="rec-card-top">
+        <div class="rec-type-badge improved">Improved Match</div>
+        <div class="rc-checkbox">✓</div>
+      </div>
+      <div class="rec-card-title">Large 3-Topping Pizza + CheezyBread</div>
+      <div class="rec-counters">Counters Papa John's Large 3-Topping</div>
+      <div class="rec-price-row">
+        <span class="rec-price-new">$17.99</span>
+        <span class="rec-price-old">$23.48</span>
+        <span class="rec-price-pct">−23.38%</span>
+      </div>
+      <div class="rec-txns">80 eligible transactions (this week)</div>
+      <div class="rec-desc">Match Papa John's Large 3-Topping and add CheezyBread free — better perceived value.</div>
+    </div>
+
+    <div class="rec-card" data-id="3" onclick="toggleRec(this)">
+      <div class="rec-card-top">
+        <div class="rec-type-badge counter">Counter</div>
+        <div class="rc-checkbox">✓</div>
+      </div>
+      <div class="rec-card-title">Chocolate Delight Trio</div>
+      <div class="rec-counters">Counters Domino's Chocolate Lava Cakes</div>
+      <div class="rec-price-row">
+        <span class="rec-price-new">$6.99</span>
+        <span class="rec-price-old">$7.99</span>
+        <span class="rec-price-pct">−12.52%</span>
+      </div>
+      <div class="rec-txns">10 eligible transactions (this week)</div>
+      <div class="rec-desc">Undercut Domino's dessert deal with Double Chocolate Brownie at $6.99.</div>
+    </div>
+
+    <div class="rec-card" data-id="4" onclick="toggleRec(this)">
+      <div class="rec-card-top">
+        <div class="rec-type-badge counter">Counter</div>
+        <div class="rc-checkbox">✓</div>
+      </div>
+      <div class="rec-card-title">Choose Your Side for $4.99</div>
+      <div class="rec-counters">Counters Papa John's PICK A SIDE</div>
+      <div class="rec-price-row">
+        <span class="rec-price-new">$4.99</span>
+        <span class="rec-price-old">$5.49</span>
+        <span class="rec-price-pct">−9.11%</span>
+      </div>
+      <div class="rec-txns">73 eligible transactions (this week)</div>
+      <div class="rec-desc">Beat Papa John's Pick-a-Side — any Marco's side at flat $4.99.</div>
+    </div>
+
+    <div class="rec-card" data-id="5" onclick="toggleRec(this)">
+      <div class="rec-card-top">
+        <div class="rec-type-badge counter">Counter</div>
+        <div class="rc-checkbox">✓</div>
+      </div>
+      <div class="rec-card-title">Any Side for $4.99</div>
+      <div class="rec-counters">Counters Papa John's ANYSIDE</div>
+      <div class="rec-price-row">
+        <span class="rec-price-new">$4.99</span>
+        <span class="rec-price-old">$5.49</span>
+        <span class="rec-price-pct">−9.11%</span>
+      </div>
+      <div class="rec-txns">73 eligible transactions (this week)</div>
+      <div class="rec-desc">Counter Papa John's ANYSIDE — all Marco's sides at $4.99 flat.</div>
+    </div>
+
+    <div class="rec-card" data-id="6" onclick="toggleRec(this)">
+      <div class="rec-card-top">
+        <div class="rec-type-badge counter">Counter</div>
+        <div class="rc-checkbox">✓</div>
+      </div>
+      <div class="rec-card-title">3 Dip Cups for $1.49</div>
+      <div class="rec-counters">Counters Domino's Dip Cup Deal</div>
+      <div class="rec-price-row">
+        <span class="rec-price-new">$1.49</span>
+        <span class="rec-price-old">$2.07</span>
+        <span class="rec-price-pct">−28.02%</span>
+      </div>
+      <div class="rec-txns">77 eligible transactions (this week)</div>
+      <div class="rec-desc">Beat Domino's dip deal: any 3 dip cups for $1.49 vs their $1.99.</div>
+    </div>
+  </div>
+
+  <div class="rec-actions-bar">
+    <button class="btn-primary" id="activateBtn" onclick="goToScreen2()" disabled>Activate Recommendations (<span id="selCount">0</span> selected)</button>
+    <button class="btn-secondary" onclick="selectAll()">Select All</button>
+    <span class="sel-count" id="selNote">Select at least 1 recommendation to continue</span>
+  </div>
+</div>
+
+<!-- ═══════════ SCREEN 2 ═══════════ -->
+<div class="screen" id="screen2">
+  <div class="sec-title" style="margin-bottom:20px;">POS System Integration · Store #8606</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;">
+
+    <!-- Left: animation -->
+    <div>
+      <div class="pos-nodes" style="margin-top:20px;">
+        <div class="pos-node">
+          <div class="pos-node-icon propheus">🧠</div>
+          <div class="pos-node-label">Propheus</div>
+          <div class="pos-node-sub">AI Engine</div>
+        </div>
+        <div class="pos-connector">
+          <div class="pos-conn-line" style="position:relative;height:2px;flex:1;background:var(--line2);">
+            <div class="pos-conn-anim"></div>
+          </div>
+          <div class="pos-conn-arrow">▶</div>
+        </div>
+        <div class="pos-node">
+          <div class="pos-node-icon">🗄️</div>
+          <div class="pos-node-label">POS Database</div>
+          <div class="pos-node-sub">Marco's #8606</div>
+        </div>
+      </div>
+      <div class="pos-log-wrap" style="margin-top:20px;">
+        <div class="pos-log-box" id="posLogBox">
+          <div class="pos-log-line" id="log0"><span class="log-ts">00:00.001</span><span class="log-ok">✓</span> Authenticated with Marco's POS API</div>
+          <div class="pos-log-line" id="log1"><span class="log-ts">00:00.182</span><span class="log-info">→</span> Fetching transaction records…</div>
+          <div class="pos-log-line" id="log2"><span class="log-ts">00:00.641</span><span class="log-ok">✓</span> Retrieved 15,012 rows · 5,995 transactions · 102 days</div>
+          <div class="pos-log-line" id="log3"><span class="log-ts">00:00.884</span><span class="log-info">→</span> Loading May 19–25 window · <span id="logPromoCount">0</span> counter-promos · <span id="logEventCount">0</span> event recs queued</div>
+          <div class="pos-log-line" id="log4"><span class="log-ts">00:01.203</span><span class="log-info">→</span> Scanning 389 transactions · <span id="logMatchCount">0</span> qualifying found</div>
+          <div class="pos-log-line" id="log5"><span class="log-ts">00:01.490</span><span class="log-ok">✓</span> Demand model ready · new customer projections calculated · impact preview available</div>
+        </div>
+      </div>
+      <div class="pos-cta" id="posCta" style="margin-top:20px;">
+        <button class="btn-primary" onclick="doAccept()">Apply Promos &amp; View Impact →</button>
+      </div>
+    </div>
+
+    <!-- Right: transaction table -->
+    <div>
+      <div class="txn-table-wrap">
+        <div class="txn-table-head">
+          <div class="txn-table-htitle">Baseline Transactions — May 19–25</div>
+          <div class="txn-table-hmeta" id="posDataRowCount">— rows</div>
+        </div>
+        <div style="overflow-x:auto;max-height:420px;overflow-y:auto;">
+          <table class="txn-table">
+            <thead>
+              <tr><th>Txn ID</th><th>Date / Time</th><th>Customer</th>
+              <th>SKU</th><th>Qty</th><th>Price</th><th>Total</th><th>Mode</th></tr>
+            </thead>
+            <tbody id="posDataTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ═══════════ SCREEN 3 ═══════════ -->
+<div class="screen" id="screen3">
+  <div class="success-banner">
+    <div class="success-icon">✓</div>
+    <div>
+      <div class="success-title">Promotions Applied Successfully</div>
+      <div class="success-sub" id="successSub">—</div>
+    </div>
+  </div>
+
+  <!-- Compare cards -->
+  <div id="compareCards5"></div>
+
+  <!-- Event Playbook panel (Staffing | Menu | Promotions tabs) -->
+  <div id="eventPlaybookS3" style="display:none;margin-bottom:0;">
+    <div class="sec-title" style="margin-top:24px;">Event Playbook</div>
+    <div class="ep-panel">
+      <div class="ep-tabs" id="epTabsS3"></div>
+      <div class="ep-content active" id="epcontent-staffing"></div>
+      <div class="ep-content" id="epcontent-menu"></div>
+      <div class="ep-content" id="epcontent-promos">
+
+
+
+        <!-- PROMO COMPARE CARD — populated by buildPromoCompareCard() -->
+        <div id="promoCompareCardMount" style="margin-top:16px;"></div>
+
+        <!-- PROMO POS DATA — full-width collapsible bar -->
+        <div style="margin-top:16px;border:1px solid var(--line2);border-radius:10px;overflow:hidden;">
+          <button id="promoToggleBtn" onclick="togglePromoData()" style="width:100%;display:flex;align-items:center;gap:10px;padding:13px 18px;background:var(--s2);border:none;cursor:pointer;text-align:left;">
+            <span style="font-size:15px;color:var(--t2);">⊞</span>
+            <span style="font-family:var(--head);font-size:13px;font-weight:600;color:var(--t1);">View POS data</span>
+            <span id="promoDataChevron" style="margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--t3);">∨</span>
+          </button>
+          <div id="promoTxnDetail" style="display:none;border-top:1px solid var(--line2);">
+            <div style="padding:16px 18px 12px;">
+              <div class="pos-tab-bar">
+                <button class="pos-tab active" id="postab-promo-b" onclick="showPosTab('promo','b')">Before · baseline txns</button>
+                <button class="pos-tab" id="postab-promo-a" onclick="showPosTab('promo','a')">After · promo applied</button>
+              </div>
+            </div>
+            <!-- BEFORE tab -->
+            <div class="pos-tab-content active" id="postabcon-promo-b">
+              <div style="overflow-x:auto;">
+                <table class="txn-table">
+                  <thead><tr>
+                    <th style="padding-left:18px;">Txn ID</th><th>Date / Time</th><th>SKU Description</th>
+                    <th>Qty</th><th>Price</th><th>Promo</th>
+                  </tr></thead>
+                  <tbody id="promoBeforeTbody"></tbody>
+                </table>
+              </div>
+            </div>
+            <!-- AFTER tab -->
+            <div class="pos-tab-content" id="postabcon-promo-a">
+              <div style="overflow-x:auto;">
+                <table class="txn-table">
+                  <thead><tr>
+                    <th style="padding-left:18px;">Txn ID</th><th>Date / Time</th><th>SKU Description</th>
+                    <th>Qty</th><th>Menu Price</th><th>Promo Applied</th><th>Promo Price</th>
+                  </tr></thead>
+                  <tbody id="promoTbody"></tbody>
+                </table>
+              </div>
+              <div id="promoAfterFootnote" style="padding:10px 18px 14px;font-family:var(--mono);font-size:9px;color:var(--t3);line-height:1.6;border-top:1px solid var(--line);">
+                Highlighted rows: repriced (amber) = promo applied to existing eligible transaction · <span id="promoFootnoteStats">— repriced · — eligible txns · showing — rows</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /epcontent-promos -->
+    </div>
+  </div>
+
+  <!-- Revenue chart -->
+  <div class="chart-wrap">
+    <div id="revChartSvg4"></div>
+  </div>
+
+  <div class="applied-actions">
+    <button class="btn-outline-green" onclick="exportCSV()">↓ Export XLSX</button>
+    <button class="btn-outline-green" onclick="newSession()">← New Session</button>
+  </div>
+</div>
+
+<script>
+// ─── BASELINE DATA (May 19–25 sample rows) ────────────────────────────────────
+const BASELINE_ROWS = [
+  {id:"TRX-8606-20260519-00001",ts:"2026-05-19 11:07",customer:"John Martinez",sku:"The Philly (XL)",up:24.99,dp:23.74,qty:1,mode:"Delivery",fulft:332},  // P4
+  {id:"TRX-8606-20260519-00001",ts:"2026-05-19 11:07",customer:"John Martinez",sku:"Chocolate CinnaSquares",up:6.99,dp:6.99,qty:1,mode:"Delivery",fulft:332},
+  {id:"TRX-8606-20260519-00001",ts:"2026-05-19 11:07",customer:"John Martinez",sku:"Aquafina 20oz",up:2.5,dp:2.5,qty:1,mode:"Delivery",fulft:332},
+  {id:"TRX-8606-20260519-00002",ts:"2026-05-19 11:45",customer:"Linda Scott",sku:"Hot Honey Magnifico (L)",up:20.49,dp:20.49,qty:1,mode:"Carryout",fulft:386},  // P2/P6
+  {id:"TRX-8606-20260519-00002",ts:"2026-05-19 11:45",customer:"Linda Scott",sku:"Diet Pepsi 20oz",up:2.5,dp:2.5,qty:2,mode:"Carryout",fulft:386},
+  {id:"TRX-8606-20260519-00002",ts:"2026-05-19 11:45",customer:"Linda Scott",sku:"Blue Cheese Cup",up:0.69,dp:0.69,qty:1,mode:"Carryout",fulft:386},
+  {id:"TRX-8606-20260519-00020",ts:"2026-05-19 16:50",customer:"Emma Parker",sku:"CinnaSquares",up:5.99,dp:5.99,qty:1,mode:"Delivery",fulft:352,void_flag:1},  // VOID · P4
+  {id:"TRX-8606-20260519-00020",ts:"2026-05-19 16:50",customer:"Emma Parker",sku:"Diet Pepsi 2 Ltr",up:3.5,dp:3.32,qty:2,mode:"Delivery",fulft:352,void_flag:1},
+  {id:"TRX-8606-20260519-00020",ts:"2026-05-19 16:50",customer:"Emma Parker",sku:"Red Pepper Flakes",up:0,dp:0,qty:1,mode:"Delivery",fulft:352,void_flag:1},
+  {id:"TRX-8606-20260519-00026",ts:"2026-05-19 18:28",customer:"Andrew Johnson",sku:"Deluxe (XL)",up:24.99,dp:21.24,qty:1,mode:"Dine-in",fulft:413,void_flag:1},  // VOID
+  {id:"TRX-8606-20260519-00026",ts:"2026-05-19 18:28",customer:"Andrew Johnson",sku:"Pepsi 20oz",up:2.5,dp:2.5,qty:4,mode:"Dine-in",fulft:413,void_flag:1},
+  {id:"TRX-8606-20260519-00048",ts:"2026-05-19 23:51",customer:"Natalia Scott",sku:"Chicken Bacon & Ranch Pizzoli",up:6.99,dp:6.64,qty:1,mode:"Delivery",fulft:383,void_flag:1},  // VOID · P6
+  {id:"TRX-8606-20260519-00048",ts:"2026-05-19 23:51",customer:"Natalia Scott",sku:"Blue Cheese Cup",up:0.69,dp:0.69,qty:1,mode:"Delivery",fulft:383,void_flag:1},
+  {id:"TRX-8606-20260520-00003",ts:"2026-05-20 11:01",customer:"Tyler King",sku:"Ham & Cheese Sub (6\")",up:6.99,dp:6.99,qty:1,mode:"Dine-in",fulft:284},
+  {id:"TRX-8606-20260520-00003",ts:"2026-05-20 11:01",customer:"Tyler King",sku:"Buffalo Wings 15-pc",up:17.99,dp:17.99,qty:1,mode:"Dine-in",fulft:284},
+  {id:"TRX-8606-20260520-00003",ts:"2026-05-20 11:01",customer:"Tyler King",sku:"Pepsi 4-Pack (4x 20oz)",up:9.96,dp:9.46,qty:1,mode:"Dine-in",fulft:284},
+  {id:"TRX-8606-20260520-00001",ts:"2026-05-20 11:50",customer:"Jennifer Young",sku:"Pepperoni Magnifico® (S)",up:14.99,dp:13.49,qty:1,mode:"Carryout",fulft:354},  // P6
+  {id:"TRX-8606-20260520-00001",ts:"2026-05-20 11:50",customer:"Jennifer Young",sku:"Chicken Classico Calzone",up:7.99,dp:7.99,qty:1,mode:"Carryout",fulft:354},
+  {id:"TRX-8606-20260520-00001",ts:"2026-05-20 11:50",customer:"Jennifer Young",sku:"Orange Crush 20oz",up:2.5,dp:2.25,qty:1,mode:"Carryout",fulft:354},
+  {id:"TRX-8606-20260520-00001",ts:"2026-05-20 11:50",customer:"Jennifer Young",sku:"Ranch Dipping Cup",up:0.69,dp:0.69,qty:1,mode:"Carryout",fulft:354},
+  {id:"TRX-8606-20260520-00004",ts:"2026-05-20 11:54",customer:"Sharon Anderson",sku:"Pizza Melt Sub (12\")",up:9.99,dp:9.99,qty:1,mode:"Carryout",fulft:345},
+  {id:"TRX-8606-20260520-00004",ts:"2026-05-20 11:54",customer:"Sharon Anderson",sku:"Chicken Bacon & Ranch Pizzoli",up:6.99,dp:6.99,qty:1,mode:"Carryout",fulft:345},
+  {id:"TRX-8606-20260520-00004",ts:"2026-05-20 11:54",customer:"Sharon Anderson",sku:"Starry 20oz",up:2.5,dp:2.25,qty:1,mode:"Carryout",fulft:345},
+  {id:"TRX-8606-20260520-00004",ts:"2026-05-20 11:54",customer:"Sharon Anderson",sku:"Red Pepper Flakes",up:0,dp:0,qty:1,mode:"Carryout",fulft:345},
+  {id:"TRX-8606-20260520-00020",ts:"2026-05-20 14:54",customer:"Kimberly Collins",sku:"Triple Pepperoni Magnifico (L)",up:20.99,dp:20.99,qty:1,mode:"Carryout",fulft:294},  // P2/P3/P4
+  {id:"TRX-8606-20260520-00020",ts:"2026-05-20 14:54",customer:"Kimberly Collins",sku:"Double Chocolate Brownie",up:7.99,dp:7.99,qty:1,mode:"Carryout",fulft:294},
+  {id:"TRX-8606-20260520-00020",ts:"2026-05-20 14:54",customer:"Kimberly Collins",sku:"Red Pepper Flakes",up:0,dp:0,qty:1,mode:"Carryout",fulft:294},
+  {id:"TRX-8606-20260520-00024",ts:"2026-05-20 15:34",customer:"Stephen Smith",sku:"Pepperoni Magnifico (L)",up:19.99,dp:19.99,qty:1,mode:"Carryout",fulft:346,void_flag:1},  // VOID · P2/P6
+  {id:"TRX-8606-20260520-00024",ts:"2026-05-20 15:34",customer:"Stephen Smith",sku:"Dr Pepper 2 Ltr",up:3.5,dp:3.5,qty:2,mode:"Carryout",fulft:346,void_flag:1},
+  {id:"TRX-8606-20260520-00024",ts:"2026-05-20 15:34",customer:"Stephen Smith",sku:"Caesar Dressing",up:0.69,dp:0.69,qty:1,mode:"Carryout",fulft:346,void_flag:1},
+  {id:"TRX-8606-20260521-00002",ts:"2026-05-21 11:12",customer:"Jordan Lopez",sku:"Pepperoni Pizzoli",up:6.99,dp:6.99,qty:1,mode:"Delivery",fulft:385},
+  {id:"TRX-8606-20260521-00002",ts:"2026-05-21 11:12",customer:"Jordan Lopez",sku:"BBQ Wings 6-pc",up:8.99,dp:8.99,qty:1,mode:"Delivery",fulft:385},
+  {id:"TRX-8606-20260521-00002",ts:"2026-05-21 11:12",customer:"Jordan Lopez",sku:"Diet Pepsi 20oz",up:2.5,dp:2.38,qty:2,mode:"Delivery",fulft:385},
+  {id:"TRX-8606-20260521-00005",ts:"2026-05-21 12:52",customer:"Michelle Sanchez",sku:"Chocolate CinnaSquares",up:6.99,dp:6.29,qty:1,mode:"Carryout",fulft:311},  // P3/P4
+  {id:"TRX-8606-20260521-00005",ts:"2026-05-21 12:52",customer:"Michelle Sanchez",sku:"Double Chocolate Brownie",up:7.99,dp:7.59,qty:1,mode:"Carryout",fulft:311},
+  {id:"TRX-8606-20260521-00005",ts:"2026-05-21 12:52",customer:"Michelle Sanchez",sku:"Diet Pepsi 20oz",up:2.5,dp:2.5,qty:1,mode:"Carryout",fulft:311},
+  {id:"TRX-8606-20260521-00005",ts:"2026-05-21 12:52",customer:"Michelle Sanchez",sku:"Red Pepper Flakes",up:0,dp:0,qty:1,mode:"Carryout",fulft:311},
+  {id:"TRX-8606-20260521-00015",ts:"2026-05-21 15:15",customer:"Tiffany Sanchez",sku:"Veggie Sub (12\")",up:9.99,dp:8.49,qty:1,mode:"Carryout",fulft:365,void_flag:1},  // VOID
+  {id:"TRX-8606-20260521-00015",ts:"2026-05-21 15:15",customer:"Tiffany Sanchez",sku:"All Meat Bowl",up:11.99,dp:11.39,qty:1,mode:"Carryout",fulft:365,void_flag:1},
+  {id:"TRX-8606-20260521-00027",ts:"2026-05-21 19:10",customer:"Sarah Smith",sku:"XL NY Style Pizza (16\")",up:17.98,dp:17.98,qty:1,mode:"Delivery",fulft:349},  // P1/P3/P4
+  {id:"TRX-8606-20260521-00027",ts:"2026-05-21 19:10",customer:"Sarah Smith",sku:"Double Chocolate Brownie",up:7.99,dp:7.99,qty:1,mode:"Delivery",fulft:349},
+  {id:"TRX-8606-20260521-00027",ts:"2026-05-21 19:10",customer:"Sarah Smith",sku:"Dr Pepper 20oz",up:2.5,dp:2.38,qty:1,mode:"Delivery",fulft:349},
+  {id:"TRX-8606-20260521-00027",ts:"2026-05-21 19:10",customer:"Sarah Smith",sku:"Red Pepper Flakes",up:0,dp:0,qty:1,mode:"Delivery",fulft:349},
+  {id:"TRX-8606-20260521-00032",ts:"2026-05-21 20:56",customer:"DeShawn White",sku:"White Cheezy (S)",up:18.99,dp:18.04,qty:1,mode:"Delivery",fulft:430,void_flag:1},  // VOID · P4
+  {id:"TRX-8606-20260521-00032",ts:"2026-05-21 20:56",customer:"DeShawn White",sku:"Breadsticks (5-pc)",up:5.49,dp:5.49,qty:1,mode:"Delivery",fulft:430,void_flag:1},
+  {id:"TRX-8606-20260521-00032",ts:"2026-05-21 20:56",customer:"DeShawn White",sku:"Dr Pepper 20oz",up:2.5,dp:2.38,qty:4,mode:"Delivery",fulft:430,void_flag:1},
+  {id:"TRX-8606-20260522-00001",ts:"2026-05-22 11:10",customer:"David Edwards",sku:"XL NY Style Pizza (16\")",up:17.98,dp:17.98,qty:1,mode:"Delivery",fulft:298},  // P1
+  {id:"TRX-8606-20260522-00001",ts:"2026-05-22 11:10",customer:"David Edwards",sku:"Garlic Parmesan Boneless Wings 10-pc",up:11.99,dp:11.39,qty:1,mode:"Delivery",fulft:298},
+  {id:"TRX-8606-20260522-00001",ts:"2026-05-22 11:10",customer:"David Edwards",sku:"Red Pepper Flakes",up:0,dp:0,qty:1,mode:"Delivery",fulft:298},
+  {id:"TRX-8606-20260522-00002",ts:"2026-05-22 11:18",customer:"Donald Nguyen",sku:"Chicken Fresco (M)",up:20.99,dp:19.94,qty:1,mode:"Delivery",fulft:361},  // P6
+  {id:"TRX-8606-20260522-00002",ts:"2026-05-22 11:18",customer:"Donald Nguyen",sku:"Dr Pepper 20oz",up:2.5,dp:2.12,qty:1,mode:"Delivery",fulft:361},
+  {id:"TRX-8606-20260522-00002",ts:"2026-05-22 11:18",customer:"Donald Nguyen",sku:"Vanilla Icing",up:0.69,dp:0.69,qty:1,mode:"Delivery",fulft:361},
+  {id:"TRX-8606-20260522-00003",ts:"2026-05-22 12:33",customer:"Amanda Edwards",sku:"Breadsticks (5-pc)",up:5.49,dp:5.49,qty:1,mode:"Delivery",fulft:348},  // P4
+  {id:"TRX-8606-20260522-00003",ts:"2026-05-22 12:33",customer:"Amanda Edwards",sku:"Plain Wings 6-pc",up:8.99,dp:8.99,qty:1,mode:"Delivery",fulft:348},
+  {id:"TRX-8606-20260522-00003",ts:"2026-05-22 12:33",customer:"Amanda Edwards",sku:"CheezyBread",up:6.49,dp:6.17,qty:1,mode:"Delivery",fulft:348},
+  {id:"TRX-8606-20260522-00003",ts:"2026-05-22 12:33",customer:"Amanda Edwards",sku:"Starry 20oz",up:2.5,dp:2.5,qty:1,mode:"Delivery",fulft:348},
+  {id:"TRX-8606-20260522-00003",ts:"2026-05-22 12:33",customer:"Amanda Edwards",sku:"Red Pepper Flakes",up:0,dp:0,qty:1,mode:"Delivery",fulft:348},
+  {id:"TRX-8606-20260522-00012",ts:"2026-05-22 15:58",customer:"Gregory Taylor",sku:"Pepperoni Pizzoli",up:6.99,dp:6.29,qty:1,mode:"Delivery",fulft:359,void_flag:1},  // VOID · P6
+  {id:"TRX-8606-20260522-00012",ts:"2026-05-22 15:58",customer:"Gregory Taylor",sku:"Pepsi 20oz",up:2.5,dp:2.5,qty:1,mode:"Delivery",fulft:359,void_flag:1},
+  {id:"TRX-8606-20260522-00012",ts:"2026-05-22 15:58",customer:"Gregory Taylor",sku:"Banana Pepper Side Cup",up:0.69,dp:0.69,qty:1,mode:"Delivery",fulft:359,void_flag:1},
+  {id:"TRX-8606-20260522-00024",ts:"2026-05-22 17:41",customer:"Pamela Johnson",sku:"XL NY Style Pizza (16\")",up:17.98,dp:17.98,qty:1,mode:"Carryout",fulft:384,void_flag:1,combo:1},  // VOID · P1/P6
+  {id:"TRX-8606-20260522-00024",ts:"2026-05-22 17:41",customer:"Pamela Johnson",sku:"Dr Pepper 2 Ltr",up:3.5,dp:3.5,qty:2,mode:"Carryout",fulft:384,void_flag:1,combo:1},
+  {id:"TRX-8606-20260522-00024",ts:"2026-05-22 17:41",customer:"Pamela Johnson",sku:"Ranch Dressing",up:0.69,dp:0.69,qty:1,mode:"Carryout",fulft:384,void_flag:1,combo:1},
+  {id:"TRX-8606-20260523-00001",ts:"2026-05-23 11:28",customer:"Steven Sanchez",sku:"Steak & Cheese Sub (6\")",up:6.99,dp:6.29,qty:1,mode:"Carryout",fulft:352},
+  {id:"TRX-8606-20260523-00001",ts:"2026-05-23 11:28",customer:"Steven Sanchez",sku:"Mountain Dew 20oz",up:2.5,dp:2.38,qty:2,mode:"Carryout",fulft:352},
+  {id:"TRX-8606-20260523-00013",ts:"2026-05-23 13:19",customer:"Raymond Nelson",sku:"The Works (S)",up:20.99,dp:20.99,qty:1,mode:"Delivery",fulft:540,void_flag:1},  // VOID · event window
+  {id:"TRX-8606-20260523-00013",ts:"2026-05-23 13:19",customer:"Raymond Nelson",sku:"Buffalo Boneless Wings 10-pc",up:11.99,dp:11.99,qty:1,mode:"Delivery",fulft:540,void_flag:1},
+  {id:"TRX-8606-20260523-00013",ts:"2026-05-23 13:19",customer:"Raymond Nelson",sku:"Starry 2 Ltr",up:3.5,dp:3.5,qty:1,mode:"Delivery",fulft:540,void_flag:1},
+  {id:"TRX-8606-20260523-00013",ts:"2026-05-23 13:19",customer:"Raymond Nelson",sku:"Red Pepper Flakes",up:0,dp:0,qty:1,mode:"Delivery",fulft:540,void_flag:1},
+  {id:"TRX-8606-20260523-00026",ts:"2026-05-23 14:10",customer:"Anthony Hernandez",sku:"XL NY Style Pizza (16\")",up:17.98,dp:17.98,qty:1,mode:"Delivery",fulft:523,void_flag:1},  // VOID · event window · P1/P6
+  {id:"TRX-8606-20260523-00026",ts:"2026-05-23 14:10",customer:"Anthony Hernandez",sku:"Starry 20oz",up:2.5,dp:2.25,qty:1,mode:"Delivery",fulft:523,void_flag:1},
+  {id:"TRX-8606-20260523-00026",ts:"2026-05-23 14:10",customer:"Anthony Hernandez",sku:"Jalapeno Ranch Dipping Cup",up:0.69,dp:0.69,qty:1,mode:"Delivery",fulft:523,void_flag:1},
+  {id:"TRX-8606-20260523-00027",ts:"2026-05-23 14:28",customer:"Jose Allen",sku:"The Works (L)",up:24.99,dp:23.74,qty:1,mode:"Dine-in",fulft:549,void_flag:1,combo:1},  // VOID · event window · P2/P4
+  {id:"TRX-8606-20260523-00027",ts:"2026-05-23 14:28",customer:"Jose Allen",sku:"Chocolate CinnaSquares",up:6.99,dp:6.99,qty:1,mode:"Dine-in",fulft:549,void_flag:1,combo:1},
+  {id:"TRX-8606-20260523-00027",ts:"2026-05-23 14:28",customer:"Jose Allen",sku:"Dr Pepper 20oz",up:2.5,dp:2.5,qty:1,mode:"Dine-in",fulft:549,void_flag:1,combo:1},
+  {id:"TRX-8606-20260523-00066",ts:"2026-05-23 21:26",customer:"Carlos Reyes",sku:"XL NY Style Pizza (16\")",up:17.98,dp:17.98,qty:1,mode:"Carryout",fulft:430,void_flag:1,combo:1},  // VOID · P1
+  {id:"TRX-8606-20260523-00066",ts:"2026-05-23 21:26",customer:"Carlos Reyes",sku:"Meatball Bake",up:11.99,dp:11.99,qty:1,mode:"Carryout",fulft:430,void_flag:1,combo:1},
+  {id:"TRX-8606-20260523-00066",ts:"2026-05-23 21:26",customer:"Carlos Reyes",sku:"Pepsi 20oz",up:2.5,dp:2.38,qty:1,mode:"Carryout",fulft:430,void_flag:1,combo:1},
+  {id:"TRX-8606-20260524-00006",ts:"2026-05-24 12:29",customer:"Marcus Turner",sku:"XL NY Style Pizza (16\")",up:17.98,dp:17.98,qty:1,mode:"Carryout",fulft:444,combo:1},  // event window · P1
+  {id:"TRX-8606-20260524-00006",ts:"2026-05-24 12:29",customer:"Marcus Turner",sku:"Pepsi 20oz",up:2.5,dp:2.5,qty:4,mode:"Carryout",fulft:444,combo:1},
+  {id:"TRX-8606-20260524-00008",ts:"2026-05-24 13:53",customer:"Gregory Brown",sku:"CinnaSquares",up:5.99,dp:5.09,qty:1,mode:"Carryout",fulft:459},  // event window · P4
+  {id:"TRX-8606-20260524-00008",ts:"2026-05-24 13:53",customer:"Gregory Brown",sku:"Plain Boneless Wings 10-pc",up:11.99,dp:11.99,qty:1,mode:"Carryout",fulft:459},
+  {id:"TRX-8606-20260524-00009",ts:"2026-05-24 14:23",customer:"Donald Baker",sku:"BarBQ Chicken (L)",up:22.99,dp:21.84,qty:1,mode:"Delivery",fulft:539,combo:1},  // event window · P2
+  {id:"TRX-8606-20260524-00009",ts:"2026-05-24 14:23",customer:"Donald Baker",sku:"Meatball Bake",up:11.99,dp:11.99,qty:1,mode:"Delivery",fulft:539,combo:1},
+  {id:"TRX-8606-20260524-00009",ts:"2026-05-24 14:23",customer:"Donald Baker",sku:"Pepsi 2 Ltr",up:3.5,dp:3.5,qty:4,mode:"Delivery",fulft:539,combo:1},
+  {id:"TRX-8606-20260524-00019",ts:"2026-05-24 17:00",customer:"Patricia Lopez",sku:"XL NY Style Pizza (16\")",up:17.98,dp:17.98,qty:1,mode:"Delivery",fulft:494,combo:1},  // event window · P1/P3/P4
+  {id:"TRX-8606-20260524-00019",ts:"2026-05-24 17:00",customer:"Patricia Lopez",sku:"Buffalo Wings 6-pc",up:8.99,dp:8.54,qty:1,mode:"Delivery",fulft:494,combo:1},
+  {id:"TRX-8606-20260524-00019",ts:"2026-05-24 17:00",customer:"Patricia Lopez",sku:"Double Chocolate Brownie",up:7.99,dp:7.19,qty:1,mode:"Delivery",fulft:494,combo:1},
+  {id:"TRX-8606-20260524-00019",ts:"2026-05-24 17:00",customer:"Patricia Lopez",sku:"Pepsi 20oz",up:2.5,dp:2.38,qty:2,mode:"Delivery",fulft:494,combo:1},
+  {id:"TRX-8606-20260524-00017",ts:"2026-05-24 17:07",customer:"Charles Stewart",sku:"Meatball Sub (6\")",up:6.99,dp:6.99,qty:1,mode:"Delivery",fulft:449},  // event window · P6
+  {id:"TRX-8606-20260524-00017",ts:"2026-05-24 17:07",customer:"Charles Stewart",sku:"Pepperoni Calzone",up:7.99,dp:7.59,qty:1,mode:"Delivery",fulft:449},
+  {id:"TRX-8606-20260524-00017",ts:"2026-05-24 17:07",customer:"Charles Stewart",sku:"Mountain Dew 2 Ltr",up:3.5,dp:2.98,qty:2,mode:"Delivery",fulft:449},
+  {id:"TRX-8606-20260524-00017",ts:"2026-05-24 17:07",customer:"Charles Stewart",sku:"Buffalo Dipping Cup",up:0.69,dp:0.69,qty:1,mode:"Delivery",fulft:449},
+  {id:"TRX-8606-20260524-00021",ts:"2026-05-24 17:31",customer:"Raymond Perez",sku:"Breadsticks (5-pc)",up:5.49,dp:5.49,qty:1,mode:"Carryout",fulft:506},  // event window · P4
+  {id:"TRX-8606-20260524-00021",ts:"2026-05-24 17:31",customer:"Raymond Perez",sku:"Plain Wings 6-pc",up:8.99,dp:8.99,qty:1,mode:"Carryout",fulft:506},
+  {id:"TRX-8606-20260524-00021",ts:"2026-05-24 17:31",customer:"Raymond Perez",sku:"Chocolate CinnaSquares",up:6.99,dp:6.99,qty:1,mode:"Carryout",fulft:506},
+  {id:"TRX-8606-20260524-00029",ts:"2026-05-24 18:15",customer:"Amanda Williams",sku:"CheezyBread",up:6.49,dp:6.49,qty:1,mode:"Carryout",fulft:552},  // event window · P4
+  {id:"TRX-8606-20260524-00025",ts:"2026-05-24 18:25",customer:"Stephanie Perez",sku:"All Meat (M)",up:20.99,dp:18.89,qty:1,mode:"Delivery",fulft:489},  // event window
+  {id:"TRX-8606-20260524-00025",ts:"2026-05-24 18:25",customer:"Stephanie Perez",sku:"Build Your Own Bowl",up:7.99,dp:7.99,qty:1,mode:"Delivery",fulft:489},
+  {id:"TRX-8606-20260524-00025",ts:"2026-05-24 18:25",customer:"Stephanie Perez",sku:"Pepsi 4-Pack (4x 20oz)",up:9.96,dp:9.96,qty:2,mode:"Delivery",fulft:489},
+  {id:"TRX-8606-20260524-00040",ts:"2026-05-24 19:41",customer:"Linda Allen",sku:"Garden (L)",up:22.99,dp:22.99,qty:1,mode:"Carryout",fulft:545},  // event window · P2/P6
+  {id:"TRX-8606-20260524-00040",ts:"2026-05-24 19:41",customer:"Linda Allen",sku:"Starry 2 Ltr",up:3.5,dp:3.15,qty:1,mode:"Carryout",fulft:545},
+  {id:"TRX-8606-20260524-00040",ts:"2026-05-24 19:41",customer:"Linda Allen",sku:"Blue Cheese Cup",up:0.69,dp:0.69,qty:1,mode:"Carryout",fulft:545},
+  {id:"TRX-8606-20260524-00036",ts:"2026-05-24 19:58",customer:"Jason Diaz",sku:"Italiano Sub (12\")",up:9.99,dp:9.99,qty:1,mode:"Delivery",fulft:454},  // event window · P4
+  {id:"TRX-8606-20260524-00036",ts:"2026-05-24 19:58",customer:"Jason Diaz",sku:"BBQ Wings 6-pc",up:8.99,dp:8.99,qty:1,mode:"Delivery",fulft:454},
+  {id:"TRX-8606-20260524-00036",ts:"2026-05-24 19:58",customer:"Jason Diaz",sku:"CinnaSquares",up:5.99,dp:5.99,qty:1,mode:"Delivery",fulft:454},
+  {id:"TRX-8606-20260524-00036",ts:"2026-05-24 19:58",customer:"Jason Diaz",sku:"Dr Pepper 2 Ltr",up:3.5,dp:3.5,qty:1,mode:"Delivery",fulft:454},
+  {id:"TRX-8606-20260524-00051",ts:"2026-05-24 21:00",customer:"Brian Edwards",sku:"Chicken Fresco (L)",up:22.99,dp:20.69,qty:1,mode:"Delivery",fulft:446},  // event window · P2
+  {id:"TRX-8606-20260524-00051",ts:"2026-05-24 21:00",customer:"Brian Edwards",sku:"Dr Pepper 20oz",up:2.5,dp:2.5,qty:1,mode:"Delivery",fulft:446},
+  {id:"TRX-8606-20260524-00051",ts:"2026-05-24 21:00",customer:"Brian Edwards",sku:"Red Pepper Flakes",up:0,dp:0,qty:1,mode:"Delivery",fulft:446},
+  {id:"TRX-8606-20260524-00047",ts:"2026-05-24 21:34",customer:"Stephen Turner",sku:"XL NY Style Pizza (16\")",up:17.98,dp:17.98,qty:1,mode:"Delivery",fulft:525},  // event window · P1
+  {id:"TRX-8606-20260524-00047",ts:"2026-05-24 21:34",customer:"Stephen Turner",sku:"BBQ Boneless Wings 6-pc",up:7.99,dp:7.59,qty:1,mode:"Delivery",fulft:525},
+  {id:"TRX-8606-20260524-00047",ts:"2026-05-24 21:34",customer:"Stephen Turner",sku:"Starry 20oz",up:2.5,dp:2.38,qty:1,mode:"Delivery",fulft:525},
+  {id:"TRX-8606-20260524-00047",ts:"2026-05-24 21:34",customer:"Stephen Turner",sku:"Red Pepper Flakes",up:0,dp:0,qty:1,mode:"Delivery",fulft:525},
+  {id:"TRX-8606-20260525-00002",ts:"2026-05-25 12:01",customer:"Laura Parker",sku:"Pizza Melt Sub (6\")",up:6.99,dp:6.29,qty:1,mode:"Carryout",fulft:324},
+  {id:"TRX-8606-20260525-00002",ts:"2026-05-25 12:01",customer:"Laura Parker",sku:"Buffalo Boneless Wings 10-pc",up:11.99,dp:10.19,qty:1,mode:"Carryout",fulft:324},
+  {id:"TRX-8606-20260525-00002",ts:"2026-05-25 12:01",customer:"Laura Parker",sku:"Pepsi 20oz",up:2.5,dp:2.12,qty:1,mode:"Carryout",fulft:324},
+  {id:"TRX-8606-20260525-00001",ts:"2026-05-25 12:11",customer:"Mary Johnson",sku:"Chicken Fresco (XL)",up:24.99,dp:24.99,qty:1,mode:"Delivery",fulft:282},
+  {id:"TRX-8606-20260525-00001",ts:"2026-05-25 12:11",customer:"Mary Johnson",sku:"Chicken Classico Calzone",up:7.99,dp:7.99,qty:1,mode:"Delivery",fulft:282},
+  {id:"TRX-8606-20260525-00001",ts:"2026-05-25 12:11",customer:"Mary Johnson",sku:"Mountain Dew 2 Ltr",up:3.5,dp:3.5,qty:4,mode:"Delivery",fulft:282},
+  {id:"TRX-8606-20260525-00004",ts:"2026-05-25 12:25",customer:"Miguel Martinez",sku:"Ultimate Magnifico (M)",up:18.99,dp:17.09,qty:1,mode:"Dine-in",fulft:356},
+  {id:"TRX-8606-20260525-00004",ts:"2026-05-25 12:25",customer:"Miguel Martinez",sku:"Buffalo Boneless Wings 15-pc",up:16.99,dp:16.99,qty:1,mode:"Dine-in",fulft:356},
+  {id:"TRX-8606-20260525-00003",ts:"2026-05-25 12:48",customer:"Gregory Baker",sku:"XL NY Style Pizza (16\")",up:17.98,dp:17.98,qty:1,mode:"Carryout",fulft:382,combo:1},  // P1
+  {id:"TRX-8606-20260525-00003",ts:"2026-05-25 12:48",customer:"Gregory Baker",sku:"BBQ Wings 15-pc",up:17.99,dp:16.19,qty:1,mode:"Carryout",fulft:382,combo:1},
+  {id:"TRX-8606-20260525-00003",ts:"2026-05-25 12:48",customer:"Gregory Baker",sku:"Mountain Dew 2 Ltr",up:3.5,dp:3.5,qty:1,mode:"Carryout",fulft:382,combo:1},
+  {id:"TRX-8606-20260525-00030",ts:"2026-05-25 18:42",customer:"Stephanie Stewart",sku:"Pizza Melt Sub (6\")",up:6.99,dp:5.94,qty:1,mode:"Delivery",fulft:383,void_flag:1},  // VOID · P6
+  {id:"TRX-8606-20260525-00030",ts:"2026-05-25 18:42",customer:"Stephanie Stewart",sku:"Pepperoni Calzone",up:7.99,dp:7.19,qty:1,mode:"Delivery",fulft:383,void_flag:1},
+  {id:"TRX-8606-20260525-00030",ts:"2026-05-25 18:42",customer:"Stephanie Stewart",sku:"Dr Pepper 20oz",up:2.5,dp:2.5,qty:2,mode:"Delivery",fulft:383,void_flag:1},
+  {id:"TRX-8606-20260525-00030",ts:"2026-05-25 18:42",customer:"Stephanie Stewart",sku:"Ranch Dipping Cup",up:0.69,dp:0.69,qty:1,mode:"Delivery",fulft:383,void_flag:1},
+];
+
+const STAFFING_PROJECTED_ROWS = {
+  '2026-05-23': [
+    {id:"TRX-8606-20260523-00004",ts:"2026-05-23 12:14",customer:"Deborah Morales",sku:"Meatball Sub (6\")",up:6.99,dp:5.94,qty:1,mode:"Delivery",fulft:300},
+    {id:"TRX-8606-20260523-00004",ts:"2026-05-23 12:14",customer:"Deborah Morales",sku:"Garlic Parmesan Wings 6-pc",up:8.99,dp:8.99,qty:1,mode:"Delivery",fulft:300},
+    {id:"TRX-8606-20260523-00004",ts:"2026-05-23 12:14",customer:"Deborah Morales",sku:"Starry 2 Ltr",up:3.5,dp:2.98,qty:1,mode:"Delivery",fulft:300},
+    {id:"TRX-8606-20260523-00006",ts:"2026-05-23 12:18",customer:"Michelle Taylor",sku:"Hot Honey Magnifico (M)",up:17.49,dp:17.49,qty:1,mode:"Carryout",fulft:306},
+    {id:"TRX-8606-20260523-00006",ts:"2026-05-23 12:18",customer:"Michelle Taylor",sku:"Garlic Parmesan Wings 15-pc",up:17.99,dp:16.19,qty:1,mode:"Carryout",fulft:306},
+    {id:"TRX-8606-20260523-00007",ts:"2026-05-23 12:22",customer:"Timothy Lopez",sku:"All Meat (XL)",up:24.99,dp:22.49,qty:1,mode:"Delivery",fulft:366},
+    {id:"TRX-8606-20260523-00007",ts:"2026-05-23 12:22",customer:"Timothy Lopez",sku:"BBQ Boneless Wings 10-pc",up:11.99,dp:10.79,qty:1,mode:"Delivery",fulft:366},
+    {id:"TRX-8606-20260523-00007",ts:"2026-05-23 12:22",customer:"Timothy Lopez",sku:"Aquafina 20oz",up:2.5,dp:2.5,qty:1,mode:"Delivery",fulft:366},
+    {id:"TRX-8606-20260523-00007",ts:"2026-05-23 12:22",customer:"Timothy Lopez",sku:"Red Pepper Flakes",up:0,dp:0,qty:1,mode:"Delivery",fulft:366},
+    {id:"TRX-8606-20260523-00005",ts:"2026-05-23 12:47",customer:"Brandon Anderson",sku:"Steak & Cheese Sub (6\")",up:6.99,dp:6.99,qty:1,mode:"Carryout",fulft:318},
+    {id:"TRX-8606-20260523-00005",ts:"2026-05-23 12:47",customer:"Brandon Anderson",sku:"CheezyBread",up:6.49,dp:6.17,qty:1,mode:"Carryout",fulft:318},
+    {id:"TRX-8606-20260523-00009",ts:"2026-05-23 13:03",customer:"Thomas Diaz",sku:"The Philly (L)",up:22.99,dp:22.99,qty:1,mode:"Carryout",fulft:302,combo:1},
+    {id:"TRX-8606-20260523-00009",ts:"2026-05-23 13:03",customer:"Thomas Diaz",sku:"Breadsticks (5-pc)",up:5.49,dp:5.49,qty:1,mode:"Carryout",fulft:302,combo:1},
+    {id:"TRX-8606-20260523-00009",ts:"2026-05-23 13:03",customer:"Thomas Diaz",sku:"Pepsi 2 Ltr",up:3.5,dp:3.5,qty:2,mode:"Carryout",fulft:302,combo:1},
+  ],
+  '2026-05-24': [
+    {id:"TRX-8606-20260524-00029",ts:"2026-05-24 17:13",customer:"Jason Castillo",sku:"Chicken Fresco (L)",up:22.99,dp:21.84,qty:1,mode:"Delivery",fulft:400,combo:1},
+    {id:"TRX-8606-20260524-00029",ts:"2026-05-24 17:13",customer:"Jason Castillo",sku:"Pepsi 2 Ltr",up:3.5,dp:3.5,qty:2,mode:"Delivery",fulft:400,combo:1},
+    {id:"TRX-8606-20260524-00029",ts:"2026-05-24 17:13",customer:"Jason Castillo",sku:"Red Pepper Flakes",up:0,dp:0,qty:1,mode:"Delivery",fulft:400,combo:1},
+    {id:"TRX-8606-20260524-00026",ts:"2026-05-24 17:23",customer:"Andrew Green",sku:"XL NY Style Pizza (16\")",up:17.98,dp:17.98,qty:1,mode:"Carryout",fulft:295},
+    {id:"TRX-8606-20260524-00026",ts:"2026-05-24 17:23",customer:"Andrew Green",sku:"Dr Pepper 2 Ltr",up:3.5,dp:3.5,qty:1,mode:"Carryout",fulft:295},
+    {id:"TRX-8606-20260524-00026",ts:"2026-05-24 17:23",customer:"Andrew Green",sku:"Greek Vinaigrette Dressing",up:0.69,dp:0.69,qty:1,mode:"Carryout",fulft:295},
+    {id:"TRX-8606-20260524-00028",ts:"2026-05-24 17:34",customer:"Timothy Martin",sku:"Hot Honey Magnifico (L)",up:20.49,dp:19.47,qty:1,mode:"Dine-in",fulft:363},
+    {id:"TRX-8606-20260524-00027",ts:"2026-05-24 17:37",customer:"Timothy Thomas",sku:"Veggie Sub (6\")",up:6.99,dp:5.94,qty:1,mode:"Delivery",fulft:290},
+    {id:"TRX-8606-20260524-00027",ts:"2026-05-24 17:37",customer:"Timothy Thomas",sku:"CinnaSquares",up:5.99,dp:5.99,qty:1,mode:"Delivery",fulft:290},
+    {id:"TRX-8606-20260524-00027",ts:"2026-05-24 17:37",customer:"Timothy Thomas",sku:"Red Pepper Flakes",up:0,dp:0,qty:1,mode:"Delivery",fulft:290},
+    {id:"TRX-8606-20260524-00025",ts:"2026-05-24 17:50",customer:"Kenneth Diaz",sku:"XL NY Style Pizza (16\")",up:17.98,dp:17.98,qty:1,mode:"Delivery",fulft:331},
+    {id:"TRX-8606-20260524-00025",ts:"2026-05-24 17:50",customer:"Kenneth Diaz",sku:"Meatball Bake",up:11.99,dp:10.79,qty:1,mode:"Delivery",fulft:331},
+    {id:"TRX-8606-20260524-00025",ts:"2026-05-24 17:50",customer:"Kenneth Diaz",sku:"Pepsi 20oz",up:2.5,dp:2.25,qty:1,mode:"Delivery",fulft:331},
+  ],
+};
+
+// ─── NEW PROMO-DRIVEN TRANSACTION ROWS (full basket per transaction) ─────────
+// promoPrice === up means full-price item (not discounted); promoPrice < up = promo discount
+const PROMO_NEW_TXNS = {
+  1: [
+    {id:"TRX-8606-20260521-NEW01",ts:"2026-05-21 17:15",customer:"Michael Torres",  sku:'XL NY Style Pizza (16")', up:17.98,promoPrice:14.08,qty:1,mode:"Delivery",promoId:1},
+    {id:"TRX-8606-20260521-NEW01",ts:"2026-05-21 17:15",customer:"Michael Torres",  sku:"Mountain Dew 20oz",       up:2.50, promoPrice:1.96, qty:2,mode:"Delivery",promoId:1},
+    {id:"TRX-8606-20260521-NEW01",ts:"2026-05-21 17:15",customer:"Michael Torres",  sku:"CheezyBread",             up:6.49, promoPrice:6.49, qty:1,mode:"Delivery",promoId:1},
+    {id:"TRX-8606-20260523-NEW02",ts:"2026-05-23 19:42",customer:"Lisa Chang",      sku:'XL NY Style Pizza (16")', up:17.98,promoPrice:14.08,qty:1,mode:"Carryout",promoId:1},
+    {id:"TRX-8606-20260523-NEW02",ts:"2026-05-23 19:42",customer:"Lisa Chang",      sku:"Pepsi 20oz",              up:2.50, promoPrice:1.96, qty:2,mode:"Carryout",promoId:1},
+    {id:"TRX-8606-20260523-NEW02",ts:"2026-05-23 19:42",customer:"Lisa Chang",      sku:"Breadsticks (5-pc)",      up:5.49, promoPrice:5.49, qty:1,mode:"Carryout",promoId:1},
+  ],
+  2: [
+    {id:"TRX-8606-20260522-NEW03",ts:"2026-05-22 20:08",customer:"Kevin Wright",    sku:"Pepperoni Magnifico (L)", up:19.99,promoPrice:15.31,qty:1,mode:"Delivery",promoId:2},
+    {id:"TRX-8606-20260522-NEW03",ts:"2026-05-22 20:08",customer:"Kevin Wright",    sku:"CheezyBread",             up:6.49, promoPrice:4.97, qty:1,mode:"Delivery",promoId:2},
+    {id:"TRX-8606-20260522-NEW03",ts:"2026-05-22 20:08",customer:"Kevin Wright",    sku:"Pepsi 20oz",              up:2.50, promoPrice:2.50, qty:2,mode:"Delivery",promoId:2},
+    {id:"TRX-8606-20260524-NEW04",ts:"2026-05-24 18:33",customer:"Amanda Foster",   sku:"Hot Honey Magnifico (L)", up:20.49,promoPrice:15.70,qty:1,mode:"Carryout",promoId:2},
+    {id:"TRX-8606-20260524-NEW04",ts:"2026-05-24 18:33",customer:"Amanda Foster",   sku:"CheezyBread",             up:6.49, promoPrice:4.97, qty:1,mode:"Carryout",promoId:2},
+    {id:"TRX-8606-20260524-NEW04",ts:"2026-05-24 18:33",customer:"Amanda Foster",   sku:"Mountain Dew 20oz",       up:2.50, promoPrice:2.50, qty:1,mode:"Carryout",promoId:2},
+  ],
+  3: [
+    {id:"TRX-8606-20260521-NEW05",ts:"2026-05-21 15:20",customer:"Carlos Rivera",   sku:'Medium Cheese Pizza (12")',up:13.99,promoPrice:13.99,qty:1,mode:"Delivery",promoId:3},
+    {id:"TRX-8606-20260521-NEW05",ts:"2026-05-21 15:20",customer:"Carlos Rivera",   sku:"Double Chocolate Brownie", up:7.99, promoPrice:6.99, qty:1,mode:"Delivery",promoId:3},
+    {id:"TRX-8606-20260523-NEW06",ts:"2026-05-23 14:50",customer:"Jennifer Wu",     sku:"Pepperoni Magnifico (S)",  up:14.99,promoPrice:14.99,qty:1,mode:"Carryout",promoId:3},
+    {id:"TRX-8606-20260523-NEW06",ts:"2026-05-23 14:50",customer:"Jennifer Wu",     sku:"Double Chocolate Brownie", up:7.99, promoPrice:6.99, qty:1,mode:"Carryout",promoId:3},
+  ],
+  4: [
+    {id:"TRX-8606-20260522-NEW07",ts:"2026-05-22 21:45",customer:"David Kim",       sku:"Sausage Magnifico (M)",   up:17.99,promoPrice:17.99,qty:1,mode:"Delivery",promoId:4},
+    {id:"TRX-8606-20260522-NEW07",ts:"2026-05-22 21:45",customer:"David Kim",       sku:"Pepperoni Bread",         up:6.99, promoPrice:4.99, qty:1,mode:"Delivery",promoId:4},
+    {id:"TRX-8606-20260524-NEW08",ts:"2026-05-24 17:18",customer:"Rachel Green",    sku:'Large Cheese Pizza (14")',up:15.99,promoPrice:15.99,qty:1,mode:"Carryout",promoId:4},
+    {id:"TRX-8606-20260524-NEW08",ts:"2026-05-24 17:18",customer:"Rachel Green",    sku:"CinnaSquares",            up:5.99, promoPrice:4.99, qty:1,mode:"Carryout",promoId:4},
+  ],
+  5: [
+    {id:"TRX-8606-20260521-NEW09",ts:"2026-05-21 20:55",customer:"Tyler Brooks",    sku:"Hot Honey Magnifico (S)", up:15.49,promoPrice:15.49,qty:1,mode:"Delivery",promoId:5},
+    {id:"TRX-8606-20260521-NEW09",ts:"2026-05-21 20:55",customer:"Tyler Brooks",    sku:"CheezyBread",             up:6.49, promoPrice:4.99, qty:1,mode:"Delivery",promoId:5},
+    {id:"TRX-8606-20260524-NEW10",ts:"2026-05-24 16:40",customer:"Nicole Adams",    sku:'Small Cheese Pizza (10")',up:10.99,promoPrice:10.99,qty:1,mode:"Carryout",promoId:5},
+    {id:"TRX-8606-20260524-NEW10",ts:"2026-05-24 16:40",customer:"Nicole Adams",    sku:"Breadsticks (5-pc)",      up:5.49, promoPrice:4.99, qty:1,mode:"Carryout",promoId:5},
+  ],
+  6: [
+    {id:"TRX-8606-20260522-NEW11",ts:"2026-05-22 19:30",customer:"James Rodriguez", sku:"Pepperoni Magnifico (M)", up:16.99,promoPrice:16.99,qty:1,mode:"Delivery",promoId:6},
+    {id:"TRX-8606-20260522-NEW11",ts:"2026-05-22 19:30",customer:"James Rodriguez", sku:"Ranch Dipping Cup",       up:0.69, promoPrice:0.50, qty:3,mode:"Delivery",promoId:6},
+    {id:"TRX-8606-20260523-NEW12",ts:"2026-05-23 20:15",customer:"Emily Chen",      sku:"Triple Pepperoni Magnifico (S)",up:15.99,promoPrice:15.99,qty:1,mode:"Carryout",promoId:6},
+    {id:"TRX-8606-20260523-NEW12",ts:"2026-05-23 20:15",customer:"Emily Chen",      sku:"Garlic Butter Dipping Cup",up:0.69, promoPrice:0.50, qty:3,mode:"Carryout",promoId:6},
+    {id:"TRX-8606-20260524-NEW13",ts:"2026-05-24 19:45",customer:"Marcus Johnson",  sku:"Deluxe (S)",              up:18.99,promoPrice:18.99,qty:1,mode:"Delivery",promoId:6},
+    {id:"TRX-8606-20260524-NEW13",ts:"2026-05-24 19:45",customer:"Marcus Johnson",  sku:"Buffalo Dipping Cup",     up:0.69, promoPrice:0.50, qty:3,mode:"Delivery",promoId:6},
+  ],
+};
+
+// ─── PROMOS ───────────────────────────────────────────────────────────────────
+// weekNew     = weekMatch × responseRate × lossPct × 2.5  (×2.5 = market-reach factor)
+// weekNewRev  = weekNew × revPerNewTxn                    (new customer revenue)
+// weekIncrRev = weekExistingIncrRev + weekNewRev          (total incremental revenue)
+// weekDisc    = weekMatch × discountPerMatch              (discount given to existing qualifying customers)
+//
+// responseRate:     0.85 for bundles, 0.92 for flat add-ons, 0.30 for micro add-ons
+// lossPct:          (standalone_total − promo_price) / standalone_total
+// revPerNewTxn:     avg full basket value of an attracted new customer
+// upsellPerMatch:   avg additional revenue per existing qualifying transaction from bundle upsell
+// discountPerMatch: avg discount given per existing qualifying transaction
+// weekMatch:        baseline txns containing anchor SKU — pre-counted from May 19-25 CSV
+const COST_RATE = 0.47;
+
+// ─── POS-DERIVED STATS (computed from transactions_8606_Dundee_demo.csv) ──────
+// All values computed by Python from actual May 19-25 transaction data.
+// "Event window" = May 23 12-15h + May 24 12-15h + May 24 17-22h (non-void txns, n=65)
+// "Normal"       = all other May 19-25 non-void, non-event transactions (n=311)
+const POS_STATS = {
+  // ── Menu emphasis "before" — real event-window ordering behaviour ────────────
+  eventComboRate:    0.262,   // 17/65 event-window txns had Is_Combo_SKU=1
+  eventSingleRate:   0.062,   // 4/65 were single-line-item orders
+  eventDiscRate:     72,      // 72% of event-window txns had at least one item at dp<up
+  eventAvgItems:     2.9,     // avg SKU line items per event-window transaction
+  avgBasketSingle:   11.65,   // avg order value for single-item orders  ($)
+  avgBasketMulti:    27.63,   // avg order value for multi-item non-combo orders ($)
+  avgBasketCombo:    32.14,   // avg order value for combo orders ($)
+  bestDayComboRate:  0.435,   // highest single-day combo attach in full history (May 11, 2026)
+
+  // ── Staffing "before" — real fulfillment from event-window rows ──────────────
+  eventFulftAvg:     497,     // mean fulfillment seconds across all event-window rows (n=190)
+  normalFulftAvg:    354,     // mean fulfillment seconds on normal non-event shifts
+  // "After" fulfillment computed at runtime from STAFFING_PROJECTED_ROWS
+  // (real May 19 lunch avg 315s, real May 20 dinner avg 362s)
+  voidRate:          3.3,     // 13 voided / 389 total transactions = 3.3%
+  // Actual hourly transaction share for each event window (from real timestamp counts)
+  lunchHourDist:     [0.113, 0.371, 0.516],           // hrs 12, 13, 14 — May 23 lunch
+  dinnerHourDist:    [0.227, 0.318, 0.173, 0.100, 0.182], // hrs 17-21 — May 24 dinner
+
+  // ── Promo compare "before" — real promo usage in May 19-25 ──────────────────
+  promoRedemptionRate: 29,    // 110/376 non-void txns had a named promo code (29.3%)
+  avgPromoBasket:    28.93,   // avg basket value for promo-eligible transactions ($)
+};
+
+const PROMOS = [
+  {
+    id:1,
+    skus:['XL NY Style Pizza (16")',"Pepsi 20oz","Diet Pepsi 20oz","Mountain Dew 20oz","Dr Pepper 20oz","Orange Crush 20oz","Starry 20oz","Aquafina 20oz"],
+    priceFn:(sku,dp)=>sku==='XL NY Style Pizza (16")'?13.49:2.25,
+    name:"XL NY + 2 Drinks", dedupeGroup:null,
+    bundle:{ anchor:['XL NY Style Pizza (16")'], secondary:["Pepsi 20oz","Diet Pepsi 20oz","Mountain Dew 20oz","Dr Pepper 20oz","Orange Crush 20oz","Starry 20oz","Aquafina 20oz"], secondaryUp:2.50, secondaryQty:2 },
+    weekMatch:110, lossPct:0.2171, responseRate:0.85, revPerNewTxn:22.40,
+    upsellPerMatch:3.01, discountPerMatch:1.67, txnCount:1460
+  },
+  {
+    id:2,
+    skus:["Pepperoni Magnifico (L)","Hot Honey Magnifico (L)","Sausage Magnifico (L)","Triple Pepperoni Magnifico (L)","Ultimate Magnifico (L)","All Meat (L)","Deluxe (L)","Garden (L)","Hawaiian Chicken (L)","The Philly (L)","White Cheezy (L)","The Big Cheese (L)","Chicken Fresco (L)","The Works (L)","Pepperoni Melt (L)","Grilled Chicken Florentine (L)","BarBQ Chicken (L)",'XL Cheese Pizza (16")',"XL NY Style Pizza (16\")",'CheezyBread'],
+    priceFn:(sku,dp)=>{ const A=["Pepperoni Magnifico (L)","Hot Honey Magnifico (L)","Sausage Magnifico (L)","Triple Pepperoni Magnifico (L)","Ultimate Magnifico (L)","All Meat (L)","Deluxe (L)","Garden (L)","Hawaiian Chicken (L)","The Philly (L)","White Cheezy (L)","The Big Cheese (L)","Chicken Fresco (L)","The Works (L)","Pepperoni Melt (L)","Grilled Chicken Florentine (L)","BarBQ Chicken (L)",'XL Cheese Pizza (16")',"XL NY Style Pizza (16\")"]; return A.includes(sku)?13.00:4.99; },
+    name:"L Pizza + CheezyBread", dedupeGroup:null,
+    bundle:{ anchor:["Pepperoni Magnifico (L)","Hot Honey Magnifico (L)","Sausage Magnifico (L)","Triple Pepperoni Magnifico (L)","Ultimate Magnifico (L)","All Meat (L)","Deluxe (L)","Garden (L)","Hawaiian Chicken (L)","The Philly (L)","White Cheezy (L)","The Big Cheese (L)","Chicken Fresco (L)","The Works (L)","Pepperoni Melt (L)","Grilled Chicken Florentine (L)","BarBQ Chicken (L)",'XL Cheese Pizza (16")',"XL NY Style Pizza (16\")"], secondary:["CheezyBread"], secondaryUp:6.49 },
+    weekMatch:80, lossPct:0.2338, responseRate:0.85, revPerNewTxn:21.76,
+    upsellPerMatch:8.49, discountPerMatch:7.98, txnCount:1416
+  },
+  {
+    id:3,
+    skus:["Double Chocolate Brownie"],
+    priceFn:(sku,dp)=>6.99,
+    name:"Chocolate Delight Trio", dedupeGroup:null,
+    weekMatch:10, lossPct:0.1252, responseRate:0.92, revPerNewTxn:8.00,
+    upsellPerMatch:0, discountPerMatch:0.72, txnCount:199
+  },
+  {
+    id:4,
+    skus:["CheezyBread","Pepperoni Bread","Breadsticks (5-pc)","CinnaSquares","Chocolate CinnaSquares","Double Chocolate Brownie"],
+    priceFn:(sku,dp)=>4.99,
+    name:"Choose Your Side $4.99", dedupeGroup:"sides",
+    weekMatch:73, lossPct:0.0911, responseRate:0.92, revPerNewTxn:19.82,
+    upsellPerMatch:2.97, discountPerMatch:1.38, txnCount:1710
+  },
+  {
+    id:5,
+    skus:["CheezyBread","Pepperoni Bread","Breadsticks (5-pc)","CinnaSquares","Chocolate CinnaSquares","Double Chocolate Brownie"],
+    priceFn:(sku,dp)=>4.99,
+    name:"Any Side $4.99", dedupeGroup:"sides",
+    weekMatch:73, lossPct:0.0911, responseRate:0.92, revPerNewTxn:19.82,
+    upsellPerMatch:2.97, discountPerMatch:1.38, txnCount:1710
+  },
+  {
+    id:6,
+    skus:["Mike's Hot Honey® Dip Cup","Jalapeno Side Cup","Banana Pepper Side Cup","Blue Cheese Cup","Caesar Dressing","Greek Vinaigrette Dressing","Buffalo Dipping Cup","Vanilla Icing","Jalapeno Ranch Dipping Cup","Pizza Sauce Dipping Cup","Ranch Dipping Cup","Ranch Dressing","Tangy BBQ Dipping Cup","Garlic Butter Dipping Cup"],
+    priceFn:(sku,dp)=>0.50,
+    name:"3 Dip Cups $1.49", dedupeGroup:null,
+    minQty:3,
+    weekMatch:77, lossPct:0.2802, responseRate:0.30, revPerNewTxn:21.00,
+    upsellPerMatch:0, discountPerMatch:0.66, txnCount:1118
+  }
+];
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let selectedIds = new Set();
+let computedPromoRows = [];
+let weeklyStats = { weekMatch:0, weekNew:0, weekDisc:0, weekNewRev:0, weekExistingIncrRev:0, weekIncrRev:0 };
+let activeNewTxnRows = [];
+let eventUplift     = [0, 0, 0, 0, 0, 0, 0]; // staffing uplift per day — populated by loadEvents()
+let menuEventUplift = [0, 0, 0, 0, 0, 0, 0]; // menu emphasis uplift per day — populated by loadEvents()
+let selectedEventRecs = new Set();
+
+function toggleEventRec(type) {
+  selectedEventRecs.has(type) ? selectedEventRecs.delete(type) : selectedEventRecs.add(type);
+  const card = document.getElementById(`eacard-${type}`);
+  if (card) {
+    card.classList.toggle('selected', selectedEventRecs.has(type));
+    const chk = card.querySelector('.ea-chk');
+    if (chk) chk.textContent = selectedEventRecs.has(type) ? '✓' : '';
+  }
+  updateActivateBtn();
+}
+
+// ─── SCREEN 1 ─────────────────────────────────────────────────────────────────
+function toggleRec(card) {
+  const id = parseInt(card.dataset.id);
+  if (selectedIds.has(id)) { selectedIds.delete(id); card.classList.remove('selected'); }
+  else { selectedIds.add(id); card.classList.add('selected'); }
+  updateActivateBtn();
+}
+
+function selectAll() {
+  document.querySelectorAll('#recGrid .rec-card').forEach(card => {
+    card.classList.add('selected');
+    selectedIds.add(parseInt(card.dataset.id));
+  });
+  updateActivateBtn();
+}
+
+function updateActivateBtn() {
+  const n = selectedIds.size + selectedEventRecs.size;
+  document.getElementById('selCount').textContent = n;
+  document.getElementById('activateBtn').disabled = n === 0;
+  document.getElementById('selNote').textContent = n === 0 ? 'Select at least 1 recommendation to continue' : '';
+}
+
+// ─── PROMO COMPUTATION ────────────────────────────────────────────────────────
+function computePromos() {
+  const activePromos = PROMOS.filter(p => selectedIds.has(p.id));
+
+  // Pre-compute which transaction IDs qualify for each bundle promo
+  // (requires both anchor AND secondary SKU present in the same order)
+  const txnSkus = {};
+  BASELINE_ROWS.forEach(r => {
+    if (!txnSkus[r.id]) txnSkus[r.id] = [];
+    txnSkus[r.id].push(r.sku);
+  });
+  const bundleQualified = {}; // bundleQualified[txnId][promoId] = true
+  activePromos.forEach(promo => {
+    if (!promo.bundle) return;
+    Object.keys(txnSkus).forEach(txnId => {
+      const skus = txnSkus[txnId];
+      const hasAnchor    = promo.bundle.anchor.some(s => skus.includes(s));
+      const hasSecondary = promo.bundle.secondary.some(s => skus.includes(s));
+      if (hasAnchor && hasSecondary) {
+        if (!bundleQualified[txnId]) bundleQualified[txnId] = {};
+        bundleQualified[txnId][promo.id] = true;
+      }
+    });
+  });
+
+  const seenDedupe = {};
+  computedPromoRows = [];
+
+  BASELINE_ROWS.forEach(txn => {
+    let bestPromo = null, bestPrice = null;
+    activePromos.forEach(promo => {
+      if (!promo.skus.includes(txn.sku)) return;
+      // Bundle promos: only apply if this transaction has both anchor + secondary
+      if (promo.bundle && !(bundleQualified[txn.id] && bundleQualified[txn.id][promo.id])) return;
+      if (promo.dedupeGroup && seenDedupe[txn.id + promo.dedupeGroup]) return;
+      const pp = promo.priceFn(txn.sku, txn.dp);
+      if (bestPromo === null || pp < bestPrice) { bestPromo = promo; bestPrice = pp; }
+    });
+    if (bestPromo) {
+      if (bestPromo.dedupeGroup) seenDedupe[txn.id + bestPromo.dedupeGroup] = true;
+      computedPromoRows.push({txn, promoPrice:bestPrice, promoName:bestPromo.name, promoCost:(txn.dp-bestPrice)*txn.qty});
+    } else {
+      computedPromoRows.push({txn, promoPrice:null, promoName:null, promoCost:0});
+    }
+  });
+
+  // Weekly stats (deduplicated by group) — derived dynamically from promo parameters
+  const seenWkly = new Set();
+  weeklyStats = {weekMatch:0, weekNew:0, weekDisc:0, weekNewRev:0, weekExistingIncrRev:0, weekIncrRev:0};
+  activePromos.forEach(p => {
+    const key = p.dedupeGroup || p.id;
+    if (seenWkly.has(key)) return;
+    seenWkly.add(key);
+    const weekNew             = Math.round(p.weekMatch * p.responseRate * p.lossPct * 2.5);
+    const weekNewRev          = Math.round(weekNew * p.revPerNewTxn);
+    const weekExistingIncrRev = Math.round(p.weekMatch * (p.upsellPerMatch || 0));
+    const weekIncrRev         = weekExistingIncrRev + weekNewRev;
+    const weekDisc            = Math.round(p.weekMatch * (p.discountPerMatch || 0));
+    weeklyStats.weekMatch           += p.weekMatch;
+    weeklyStats.weekNew             += weekNew;
+    weeklyStats.weekDisc            += weekDisc;
+    weeklyStats.weekNewRev          += weekNewRev;
+    weeklyStats.weekExistingIncrRev += weekExistingIncrRev;
+    weeklyStats.weekIncrRev         += weekIncrRev;
+  });
+
+  // New txn rows for Screen 4 Table 2 (deduplicated by group)
+  const seenNew = new Set();
+  activeNewTxnRows = [];
+  activePromos.forEach(p => {
+    const key = p.dedupeGroup || p.id;
+    if (seenNew.has(key)) return;
+    seenNew.add(key);
+    (PROMO_NEW_TXNS[p.id] || []).forEach(r => activeNewTxnRows.push(r));
+  });
+}
+
+// ─── SCREEN NAV ───────────────────────────────────────────────────────────────
+function setScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen' + n).classList.add('active');
+  for (let i = 1; i <= 3; i++) {
+    const step = document.getElementById('pnav' + i);
+    step.classList.remove('active','done');
+    if (i < n) step.classList.add('done');
+    else if (i === n) step.classList.add('active');
+    step.querySelector('.pnum').textContent = i < n ? '✓' : i;
+  }
+  window.scrollTo(0, 0);
+}
+
+function goToScreen2() {
+  computePromos();
+  setScreen(2);
+  document.getElementById('posDataRowCount').textContent = BASELINE_ROWS.length + ' rows';
+  // Populate POS transaction table in screen 2
+  const tbody = document.getElementById('posDataTbody');
+  tbody.innerHTML = '';
+  BASELINE_ROWS.forEach(txn => {
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      `<td class="txn-id">${txn.id.replace('TRX-8606-','')}</td>` +
+      `<td style="font-family:var(--mono);font-size:10px;color:var(--t2);">${txn.ts}</td>` +
+      `<td style="font-size:11.5px;">${txn.customer}</td>` +
+      `<td><span class="txn-sku">${txn.sku}</span></td>` +
+      `<td style="font-family:var(--mono);font-size:11px;text-align:center;">${txn.qty}</td>` +
+      `<td style="font-family:var(--mono);font-size:11px;">$${txn.dp.toFixed(2)}</td>` +
+      `<td style="font-family:var(--mono);font-size:11px;color:var(--t2);">$${(txn.dp*txn.qty).toFixed(2)}</td>` +
+      `<td style="font-family:var(--mono);font-size:10px;color:var(--t3);">${txn.mode}</td>`;
+    tbody.appendChild(tr);
+  });
+  runPosAnimation();
+}
+
+function toggleNewCustomers() {
+  const rows = document.querySelectorAll('.new-cust-collapsible');
+  const arrow = document.getElementById('newCustToggleArrow');
+  const hint = document.getElementById('newCustToggleHint');
+  const isOpen = rows.length > 0 && rows[0].style.display !== 'none';
+  rows.forEach(r => r.style.display = isOpen ? 'none' : '');
+  if (arrow) arrow.textContent = isOpen ? '▶' : '▼';
+  if (hint) hint.textContent = isOpen ? 'click to expand' : 'click to shrink';
+}
+
+
+function drawRevenueChart(cid = 'revChartSvg') {
+  const container = document.getElementById(cid);
+  if (!container) return;
+
+  const dayLabels = ['Tue','Wed','Thu','Fri','Sat','Sun','Mon'];
+  const dateSubs  = ['May 19','May 20','May 21','May 22','May 23','May 24','May 25'];
+  const baseRev   = [1299, 1556, 1273, 1484, 1971, 1704, 1371];
+  const wts       = [0.122, 0.146, 0.119, 0.139, 0.185, 0.160, 0.129];
+  const liftRev    = wts.map(w => Math.round(weeklyStats.weekIncrRev * w));
+  const evtActive  = baseRev.map((_, i) =>
+    (selectedEventRecs.has('staffing') ? eventUplift[i] : 0) +
+    (selectedEventRecs.has('menu')     ? menuEventUplift[i] : 0)
+  );
+  const totalRev   = baseRev.map((b, i) => b + evtActive[i] + liftRev[i]);
+
+  const W = 560, H = 200, PL = 52, PR = 16, PT = 16, PB = 34;
+  const gW = W - PL - PR, gH = H - PT - PB;
+  const maxVal = Math.ceil(Math.max(...totalRev) / 500) * 500;
+  const n = dayLabels.length;
+  const stepX = gW / n;
+  const barW = Math.floor(stepX * 0.62);
+
+  const tx  = i => PL + i * stepX + stepX / 2;
+  const ty  = v => PT + gH - (v / maxVal * gH);
+  const bh  = v => v / maxVal * gH;
+
+  const yStep = maxVal <= 2500 ? 500 : 1000;
+  const yTicks = Array.from({length: Math.floor(maxVal / yStep) + 1}, (_, k) => k * yStep).map(v =>
+    `<line x1="${PL}" y1="${ty(v).toFixed(1)}" x2="${(W - PR).toFixed(1)}" y2="${ty(v).toFixed(1)}" stroke="#1e2535" stroke-width="1"/>
+     <text x="${(PL - 6).toFixed(1)}" y="${(ty(v) + 4).toFixed(1)}" text-anchor="end" font-size="9" fill="#4a5568">${v >= 1000 ? '$' + (v / 1000).toFixed(1) + 'k' : '$' + v}</text>`
+  ).join('');
+
+  const xLabels = dayLabels.map((d, i) =>
+    `<text x="${tx(i).toFixed(1)}" y="${(PT + gH + 18).toFixed(1)}" text-anchor="middle" font-size="10" fill="#6b7a99">${d}</text>`
+  ).join('');
+
+  const uid   = cid.replace(/[^a-z0-9]/gi, '');
+  const tipId = `tip-${uid}`;
+
+  const bars = baseRev.map((b, i) => {
+    const ev   = evtActive[i];
+    const lift = liftRev[i];
+    const x    = (tx(i) - barW / 2).toFixed(1);
+    const tip  = `${dayLabels[i]} · ${dateSubs[i]}|Baseline: $${b.toLocaleString()}${ev > 0 ? '|Event uplift: +$' + ev.toLocaleString() : ''}|Promo uplift: +$${lift.toLocaleString()}|Total: $${(b + ev + lift).toLocaleString()}`;
+    return `<g style="cursor:pointer;"
+        onmouseenter="showChartTip(event,'${tipId}','${tip}')"
+        onmouseleave="hideChartTip('${tipId}')">
+      <rect x="${x}" y="${ty(b).toFixed(1)}" width="${barW}" height="${bh(b).toFixed(1)}" fill="#2a3045" rx="2"/>
+      ${ev > 0 ? `<rect x="${x}" y="${ty(b + ev).toFixed(1)}" width="${barW}" height="${bh(ev).toFixed(1)}" fill="#8b6fff" opacity="0.75" rx="2"/>` : ''}
+      ${lift > 0 ? `<rect x="${x}" y="${ty(b + ev + lift).toFixed(1)}" width="${barW}" height="${bh(lift).toFixed(1)}" fill="#00f0a8" opacity="0.85" rx="2"/>` : ''}
+    </g>`;
+  }).join('');
+
+  container.innerHTML = `
+    <div id="${tipId}" style="display:none;position:fixed;background:#1a2235;border:1px solid #2a3a5c;border-radius:7px;padding:9px 13px;font-size:11px;color:#c8d4ec;pointer-events:none;z-index:9999;box-shadow:0 4px 18px rgba(0,0,0,0.5);min-width:160px;"></div>
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:10px;flex-wrap:wrap;">
+      <span style="font-size:11px;font-weight:600;color:var(--t2);letter-spacing:.03em;">Revenue · May 19–25</span>
+      <div style="margin-left:auto;display:flex;gap:14px;">
+        <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t3);">
+          <div style="width:12px;height:10px;background:#2a3045;border-radius:2px;"></div>Baseline
+        </div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t3);">
+          <div style="width:12px;height:10px;background:#8b6fff;opacity:0.75;border-radius:2px;"></div>Event uplift
+        </div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t3);">
+          <div style="width:12px;height:10px;background:#00f0a8;opacity:0.85;border-radius:2px;"></div>Promo uplift
+        </div>
+      </div>
+    </div>
+    <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;overflow:visible;">
+      ${yTicks}
+      ${bars}
+      ${xLabels}
+    </svg>
+  `;
+}
+
+function showChartTip(e, tipId, raw) {
+  const tip = document.getElementById(tipId);
+  if (!tip) return;
+  const lines = raw.split('|');
+  tip.innerHTML = `<div style="font-weight:700;color:#fff;margin-bottom:5px;">${lines[0]}</div>` +
+    lines.slice(1).map(l => {
+      const isEvent = l.startsWith('Event');
+      const isAgent = l.startsWith('Agent');
+      const isTotal = l.startsWith('Total');
+      return `<div style="color:${isEvent?'#8b6fff':isAgent?'#00f0a8':isTotal?'#fff':'#8899bb'};margin-top:2px;">${l}</div>`;
+    }).join('');
+  tip.style.display = 'block';
+  tip.style.left = (e.clientX + 14) + 'px';
+  tip.style.top  = (e.clientY - 10) + 'px';
+}
+
+function hideChartTip(tipId) {
+  const tip = document.getElementById(tipId);
+  if (tip) tip.style.display = 'none';
+}
+
+function renderCompareCards(cid) {
+  const el = document.getElementById(cid);
+  if (!el) return;
+  const incrRev      = weeklyStats.weekIncrRev;
+  const newTxns      = weeklyStats.weekNew;
+  const promoCost    = weeklyStats.weekDisc;
+  const evtTotal     = (selectedEventRecs.has('staffing') ? Math.round(eventUplift.reduce((a,b)=>a+b,0)) : 0)
+                     + (selectedEventRecs.has('menu')     ? Math.round(menuEventUplift.reduce((a,b)=>a+b,0)) : 0);
+  const BASE_REV = 10658, BASE_TXNS = 389;
+  const waRev        = BASE_REV + incrRev + evtTotal;
+  const evtLabel     = evtTotal > 0
+    ? `+$${incrRev.toLocaleString()} from promos · +$${evtTotal.toLocaleString()} from events`
+    : `+$${incrRev.toLocaleString()} from promos`;
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:stretch;margin-bottom:18px;">
+      <div style="background:var(--panel);border:2px solid var(--g);border-radius:10px;padding:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <span style="font-size:12px;font-weight:600;color:var(--t2);">Without retail agent</span>
+          <span style="font-size:11px;color:var(--t3);background:var(--bg2);padding:2px 8px;border-radius:6px;border:1px solid var(--border);">baseline</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+          <div><div style="font-size:11px;color:var(--t3);margin-bottom:3px;">Weekly revenue</div><div style="font-size:19px;font-weight:700;color:var(--t1);">$${BASE_REV.toLocaleString()}</div></div>
+          <div><div style="font-size:11px;color:var(--t3);margin-bottom:3px;">Transactions</div><div style="font-size:19px;font-weight:700;color:var(--t1);">${BASE_TXNS}</div></div>
+          <div><div style="font-size:11px;color:var(--t3);margin-bottom:3px;">Promo cost</div><div style="font-size:19px;font-weight:700;color:var(--t3);">$0</div></div>
+        </div>
+      </div>
+      <div style="background:var(--panel);border:2px solid var(--g);border-radius:10px;padding:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <span style="font-size:12px;font-weight:600;color:var(--g);">With retail agent</span>
+          <span style="font-size:11px;background:rgba(0,240,168,0.1);color:#00c48a;padding:2px 8px;border-radius:6px;">recommended</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+          <div>
+            <div style="font-size:11px;color:var(--t3);margin-bottom:3px;">Weekly revenue</div>
+            <div style="font-size:19px;font-weight:700;color:var(--g);">$${waRev.toLocaleString()}</div>
+            <div style="font-size:10px;color:var(--g);margin-top:3px;">${evtLabel}</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--t3);margin-bottom:3px;">Transactions</div>
+            <div style="font-size:19px;font-weight:700;color:var(--g);">${BASE_TXNS + newTxns}</div>
+            <div style="font-size:10px;color:var(--t3);margin-top:3px;">${weeklyStats.weekMatch} qualifying · +${newTxns} new</div>
+          </div>
+          <div><div style="font-size:11px;color:var(--t3);margin-bottom:3px;">Promo cost</div><div style="font-size:19px;font-weight:700;color:var(--t1);">$${promoCost.toLocaleString()}</div></div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ─── POS ANIMATION ────────────────────────────────────────────────────────────
+function runPosAnimation() {
+  for (let i = 0; i < 6; i++) document.getElementById('log' + i).classList.remove('visible');
+  document.getElementById('posCta').classList.remove('visible');
+
+  document.getElementById('logPromoCount').textContent = selectedIds.size;
+  document.getElementById('logEventCount').textContent = selectedEventRecs.size;
+  document.getElementById('logMatchCount').textContent = weeklyStats.weekMatch || BASELINE_ROWS.length;
+
+  // Update button text based on what's selected
+  const applyBtn = document.querySelector('#posCta button');
+  if (applyBtn) {
+    const hasP = selectedIds.size > 0, hasE = selectedEventRecs.size > 0;
+    applyBtn.textContent = (hasP && hasE) ? 'Apply Promos + Event Recs & View Impact →'
+                         : hasP            ? 'Apply Promos & View Impact →'
+                                           : 'Apply Event Recs & View Impact →';
+  }
+
+  [200,600,1100,1600,2100,2700].forEach((d,i) => {
+    setTimeout(() => document.getElementById('log'+i).classList.add('visible'), d);
+  });
+  setTimeout(() => document.getElementById('posCta').classList.add('visible'), 3800);
+}
+
+// ─── REVIEW TABLE (Screen 3) ──────────────────────────────────────────────────
+function buildReviewTable() {
+  const tbody = document.getElementById('reviewTbody');
+  tbody.innerHTML = '';
+  computedPromoRows.forEach(({txn, promoPrice, promoName}) => {
+    const hasPromo = promoPrice !== null;
+    const tr = document.createElement('tr');
+    if (hasPromo) tr.classList.add('promo-row');
+    tr.innerHTML =
+      `<td class="txn-id">${txn.id.replace('TRX-8606-','')}</td>` +
+      `<td style="font-family:var(--mono);font-size:10px;color:var(--t2);">${txn.ts}</td>` +
+      `<td style="font-size:11.5px;">${txn.customer}</td>` +
+      `<td><span class="txn-sku">${txn.sku}</span>${hasPromo?'<span class="promo-badge">PROMO</span>':''}</td>` +
+      `<td style="font-family:var(--mono);font-size:11px;text-align:center;">${txn.qty}</td>` +
+      `<td style="font-family:var(--mono);font-size:11px;">$${txn.up.toFixed(2)}</td>` +
+      `<td style="font-family:var(--mono);font-size:11px;">$${txn.dp.toFixed(2)}</td>` +
+      `<td>${hasPromo?'<span class="promo-price-cell">$'+promoPrice.toFixed(2)+'</span>':'<span class="dim-price">—</span>'}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+// ─── TOGGLE DETAIL SECTIONS ───────────────────────────────────────────────────
+function toggleDetail(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const willShow = el.style.display === 'none';
+  el.style.display = willShow ? '' : 'none';
+  const btn = document.querySelector(`[onclick="toggleDetail('${id}')"]`);
+  if (btn) btn.textContent = willShow ? 'Hide transactions ←' : 'View event-day transactions →';
+}
+
+function togglePromoData() {
+  const el = document.getElementById('promoTxnDetail');
+  const chevron = document.getElementById('promoDataChevron');
+  if (!el) return;
+  const willShow = el.style.display === 'none';
+  el.style.display = willShow ? '' : 'none';
+  if (chevron) chevron.textContent = willShow ? '∧' : '∨';
+}
+
+// ─── ACCEPT / REJECT ──────────────────────────────────────────────────────────
+function doAccept() {
+  setScreen(3);
+  buildTwoTableView();
+
+  const evtTotal = (selectedEventRecs.has('staffing') ? Math.round(eventUplift.reduce((a,b)=>a+b,0)) : 0)
+                 + (selectedEventRecs.has('menu')     ? Math.round(menuEventUplift.reduce((a,b)=>a+b,0)) : 0);
+  const totalIncrRev = weeklyStats.weekIncrRev + evtTotal;
+
+  const evtLabel = selectedEventRecs.size > 0
+    ? ' · ' + selectedEventRecs.size + ' event rec' + (selectedEventRecs.size > 1 ? 's' : '')
+    : '';
+  document.getElementById('successSub').textContent =
+    selectedIds.size + ' promotion' + (selectedIds.size > 1 ? 's' : '') + evtLabel +
+    ' applied · May 19–25 window · Store #8606 Dundee, FL';
+
+  renderCompareCards('compareCards5');
+  drawRevenueChart('revChartSvg4');
+
+  // promoCompareCardMount is populated by buildTwoTableView → buildPromoCompareCard()
+
+  // Reset promo data toggle
+  const promoDetail = document.getElementById('promoTxnDetail');
+  if (promoDetail) promoDetail.style.display = 'none';
+  const promoDataChevron2 = document.getElementById('promoDataChevron');
+  if (promoDataChevron2) promoDataChevron2.textContent = '∨';
+
+  // Show event playbook panel if any event recs OR promos selected
+  const hasPlaybook = selectedEventRecs.size > 0 || selectedIds.size > 0;
+  const epS3 = document.getElementById('eventPlaybookS3');
+  if (epS3) {
+    epS3.style.display = hasPlaybook ? 'block' : 'none';
+    if (hasPlaybook) {
+      // Show tabs based on what was selected
+      const firstVisible = [];
+      document.querySelectorAll('#epTabsS3 .ep-tab').forEach(btn => {
+        const key = btn.dataset.ep;
+        let visible = false;
+        if (key === 'promos')   visible = selectedIds.size > 0;
+        else                    visible = selectedEventRecs.has(key);
+        btn.style.display = visible ? '' : 'none';
+        if (visible) firstVisible.push(key);
+      });
+      if (firstVisible.length) showEpTab(firstVisible[0]);
+    }
+  }
+}
+
+function doReject() {
+  selectedIds.clear();
+  document.querySelectorAll('#recGrid .rec-card').forEach(c => c.classList.remove('selected'));
+  updateActivateBtn();
+  setScreen(1);
+}
+
+// ─── TWO-TABLE VIEW (Screen 4) ────────────────────────────────────────────────
+function buildPromoCompareCard() {
+  const TOTAL_REV = 10658;
+  const weekNew      = weeklyStats.weekNew;
+  const weekIncrRev  = weeklyStats.weekIncrRev;
+  const weekMatch    = weeklyStats.weekMatch;
+
+  // bRedemptionRate: real — 110/376 non-void May txns had a named promo code = 29%
+  const bRedemptionRate = POS_STATS.promoRedemptionRate;
+  const aRedemptionRate = Math.min(75, Math.round(bRedemptionRate + weekMatch * 0.121));
+  const redemptionDelta = aRedemptionRate - bRedemptionRate;
+  // bBasket: real avg basket for promo-eligible transactions = $28.93
+  const bBasket         = POS_STATS.avgPromoBasket.toFixed(2);
+  const aBasketDelta    = weekIncrRev > 0 ? (weekIncrRev / 3022 * 2.80).toFixed(2) : '0.00';
+  const aBasket         = (POS_STATS.avgPromoBasket + parseFloat(aBasketDelta)).toFixed(2);
+  const aWeekRev        = TOTAL_REV + weekIncrRev;
+
+  // Competitor bullets from selected promos
+  const papaItems = [];
+  const dominosItems = [];
+  if (selectedIds.has(1)) papaItems.push('XL NY Style ($22.98)');
+  if (selectedIds.has(2)) { papaItems.push('Large 3-Topping ($23.48)'); papaItems.push('PICK A SIDE ($5.49)'); }
+  if (selectedIds.has(3)) dominosItems.push('Chocolate Lava Cakes ($7.99)');
+  if ((selectedIds.has(4) || selectedIds.has(5)) && !papaItems.includes('PICK A SIDE ($5.49)')) papaItems.push('PICK A SIDE ($5.49)');
+  if (selectedIds.has(6)) dominosItems.push('3 Dip Cups ($1.99)');
+
+  const bullets = [];
+  if (papaItems.length > 0)
+    bullets.push(`<div class="promo-why-item"><span class="promo-why-dot"></span><span>Papa John's ${papaItems.join(' · ')} — ${papaItems.length} active promo${papaItems.length !== 1 ? 's' : ''}</span></div>`);
+  if (dominosItems.length > 0)
+    bullets.push(`<div class="promo-why-item"><span class="promo-why-dot"></span><span>Domino's ${dominosItems.join(' · ')} — ${dominosItems.length} active promo${dominosItems.length !== 1 ? 's' : ''} · combined threat score 434</span></div>`);
+  if (bullets.length === 0)
+    bullets.push(`<div class="promo-why-item"><span class="promo-why-dot"></span><span>Competitive pricing threats detected in local market</span></div>`);
+
+  return `<div class="promo-compare-card">
+    <div class="promo-card-hdr">
+      <div style="font-family:var(--head);font-size:15px;font-weight:700;color:var(--t1);">Counter-promos applied · May 19–25 · Store #8606</div>
+      <div style="font-family:var(--mono);font-size:10px;background:rgba(255,100,80,.1);color:var(--orange);border:1px solid rgba(255,100,80,.3);padding:4px 12px;border-radius:20px;letter-spacing:.5px;">Promotions</div>
+    </div>
+    <div class="promo-why-fired">
+      <div class="promo-why-label">Why This Rec Fired</div>
+      ${bullets.join('')}
+    </div>
+    <div class="promo-ba-grid">
+      <div class="promo-ba-before">
+        <div class="promo-ba-label">⊙ Before · No Counter-Promo</div>
+        <div class="promo-ba-metric">
+          <div class="promo-ba-mrow"><span class="promo-ba-ml">Promo redemption rate</span><span class="promo-ba-mv bad">${bRedemptionRate}%</span></div>
+        </div>
+        <div class="promo-ba-metric">
+          <div class="promo-ba-mrow"><span class="promo-ba-ml">Avg basket value</span><span class="promo-ba-mv bad">$${bBasket}</span></div>
+        </div>
+        <div class="promo-ba-metric">
+          <div class="promo-ba-mrow"><span class="promo-ba-ml">Weekly revenue</span><span class="promo-ba-mv bad">$${TOTAL_REV.toLocaleString()}</span></div>
+        </div>
+      </div>
+      <div class="promo-ba-after">
+        <div class="promo-ba-label" style="color:var(--g);">✓ After · Promos Applied</div>
+        <div class="promo-ba-metric">
+          <div class="promo-ba-mrow">
+            <span class="promo-ba-ml" style="color:var(--t1);">Promo redemption rate</span>
+            <span class="promo-ba-mv good">${aRedemptionRate}%</span>
+            <span class="promo-ba-delta">+${redemptionDelta}pp</span>
+          </div>
+        </div>
+        <div class="promo-ba-metric">
+          <div class="promo-ba-mrow">
+            <span class="promo-ba-ml" style="color:var(--t1);">Avg basket value</span>
+            <span class="promo-ba-mv good">$${aBasket}</span>
+            <span class="promo-ba-delta">+$${aBasketDelta}</span>
+          </div>
+        </div>
+        <div class="promo-ba-metric">
+          <div class="promo-ba-mrow">
+            <span class="promo-ba-ml" style="color:var(--t1);">New customers from uplift</span>
+            <span class="promo-ba-mv good">+${weekNew}</span>
+            <span style="font-family:var(--mono);font-size:9.5px;background:rgba(0,240,168,.12);color:var(--g);border:1px solid rgba(0,240,168,.2);padding:2px 7px;border-radius:999px;">new</span>
+          </div>
+        </div>
+        <div class="promo-ba-metric">
+          <div class="promo-ba-mrow">
+            <span class="promo-ba-ml" style="color:var(--t1);">Weekly revenue</span>
+            <span class="promo-ba-mv good">$${aWeekRev.toLocaleString()}</span>
+            <span class="promo-ba-delta">+$${weekIncrRev.toLocaleString()}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function buildTwoTableView() {
+  // Inject promo compare card
+  const cardMount = document.getElementById('promoCompareCardMount');
+  if (cardMount) cardMount.innerHTML = buildPromoCompareCard();
+
+  // Table 1: baseline (no promos) — only present on Screen 3
+  const btbody = document.getElementById('baselineTbody');
+  if (btbody) {
+    btbody.innerHTML = '';
+    BASELINE_ROWS.forEach(txn => {
+      const tr = document.createElement('tr');
+      tr.innerHTML =
+        `<td class="txn-id">${txn.id.replace('TRX-8606-','')}</td>` +
+        `<td style="font-family:var(--mono);font-size:10px;color:var(--t2);">${txn.ts}</td>` +
+        `<td style="font-size:11.5px;">${txn.customer}</td>` +
+        `<td><span class="txn-sku">${txn.sku}</span></td>` +
+        `<td style="font-family:var(--mono);font-size:11px;text-align:center;">${txn.qty}</td>` +
+        `<td style="font-family:var(--mono);font-size:11px;">$${txn.dp.toFixed(2)}</td>` +
+        `<td style="font-family:var(--mono);font-size:11px;color:var(--t2);">$${(txn.dp*txn.qty).toFixed(2)}</td>`;
+      btbody.appendChild(tr);
+    });
+  }
+
+  // Populate promoBeforeTbody (Before tab — baseline state, no promos applied)
+  const pbbody = document.getElementById('promoBeforeTbody');
+  if (pbbody) {
+    pbbody.innerHTML = '';
+    computedPromoRows.forEach(({txn}) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML =
+        `<td class="txn-id">${txn.id.replace('TRX-8606-','')}</td>` +
+        `<td style="font-family:var(--mono);font-size:10px;color:var(--t2);">${txn.ts.replace('2026-0','May ').replace(/-(\d+) /, ' · ').replace(/^May 5-/,'May ')}</td>` +
+        `<td><span class="txn-sku">${txn.sku}</span></td>` +
+        `<td style="font-family:var(--mono);font-size:11px;text-align:center;">${txn.qty}</td>` +
+        `<td style="font-family:var(--mono);font-size:11px;">$${txn.dp.toFixed(2)}</td>` +
+        `<td><span class="dim-price">—</span></td>`;
+      pbbody.appendChild(tr);
+    });
+    const beforeMeta = document.getElementById('promoBeforeMeta');
+    if (beforeMeta) {
+      beforeMeta.innerHTML = `<span style="color:var(--t3);">${computedPromoRows.length} rows · no promos applied</span>`;
+    }
+  }
+
+  // Table 2: repriced existing + new promo txns (After tab)
+  const ptbody = document.getElementById('promoTbody');
+  ptbody.innerHTML = '';
+
+  // Repriced existing rows
+  computedPromoRows.forEach(({txn, promoPrice, promoName, promoCost}) => {
+    const changed = promoPrice !== null;
+    const tr = document.createElement('tr');
+    if (changed) tr.classList.add('repriced-row');
+
+    const menuPriceCell = `<span style="font-family:var(--mono);font-size:11px;">${changed ? `<span style="color:var(--t2);">$${txn.dp.toFixed(2)}</span>` : `$${txn.dp.toFixed(2)}`}</span>`;
+
+    const promoAppliedCell = changed
+      ? `<span class="pos-promo-badge">${promoName}</span>`
+      : `<span class="dim-price">—</span>`;
+
+    const newPriceCell = changed
+      ? `<span class="new-price-green">$${promoPrice.toFixed(2)}</span>`
+      : `<span style="font-family:var(--mono);font-size:11px;color:var(--t2);">$${txn.dp.toFixed(2)}</span>`;
+
+    tr.innerHTML =
+      `<td class="txn-id">${txn.id.replace('TRX-8606-','')}</td>` +
+      `<td style="font-family:var(--mono);font-size:10px;color:var(--t2);">${txn.ts.replace('2026-0','May ').replace(/-(\d+) /, ' · ').replace(/^May 5-/,'May ')}</td>` +
+      `<td><span class="txn-sku">${txn.sku}</span></td>` +
+      `<td style="font-family:var(--mono);font-size:11px;text-align:center;">${txn.qty}</td>` +
+      `<td>${menuPriceCell}</td>` +
+      `<td>${promoAppliedCell}</td>` +
+      `<td>${newPriceCell}</td>`;
+    ptbody.appendChild(tr);
+  });
+
+  // Separator row — clickable toggle for new customer rows
+  if (activeNewTxnRows.length > 0) {
+    const sep = document.createElement('tr');
+    sep.id = 'newCustSepRow';
+    sep.style.cursor = 'pointer';
+    sep.innerHTML = `<td colspan="7" style="background:rgba(77,138,255,.08);padding:7px 12px;font-family:var(--mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);border-top:1px solid rgba(77,138,255,.2);border-bottom:1px solid rgba(77,138,255,.2);user-select:none;"><span id="newCustToggleArrow">▶</span> &nbsp;Projected New Customers Attracted by Promos <span id="newCustToggleHint" style="color:var(--t3);margin-left:6px;">(${activeNewTxnRows.length} rows — click to expand)</span></td>`;
+    sep.onclick = toggleNewCustomers;
+    ptbody.appendChild(sep);
+  }
+
+  // New promo-driven transaction rows (hidden by default)
+  const promoNames = {};
+  PROMOS.forEach(p => promoNames[p.id] = p.name);
+
+  // Update promoSampleMeta and footnote with live repriced/eligible counts
+  const repricedCount = computedPromoRows.filter(r => r.promoPrice !== null).length;
+  const sampleMeta = document.getElementById('promoSampleMeta');
+  if (sampleMeta) {
+    sampleMeta.innerHTML =
+      `<span style="color:rgba(245,200,66,.8);">■</span> Repriced &nbsp;&nbsp;<span style="color:var(--blue);">■</span> New customer from uplift`;
+  }
+  const footnoteStats = document.getElementById('promoFootnoteStats');
+  if (footnoteStats) {
+    footnoteStats.textContent = `${repricedCount} repriced · ${weeklyStats.weekMatch} eligible txns · showing ${computedPromoRows.length} rows`;
+  }
+
+  activeNewTxnRows.forEach(r => {
+    const tr = document.createElement('tr');
+    tr.classList.add('new-txn-row');
+    tr.classList.add('new-cust-collapsible');
+    tr.style.display = 'none';
+    const pName = promoNames[r.promoId] || '';
+    const isDiscounted = r.promoPrice < r.up;
+
+    const promoAppliedCell = isDiscounted
+      ? `<span class="pos-promo-badge" style="background:rgba(77,138,255,.12);color:var(--blue);border-color:rgba(77,138,255,.2);">${pName}</span>`
+      : `<span class="dim-price">—</span>`;
+
+    const promoPriceCell = isDiscounted
+      ? `<span class="new-price-green">$${r.promoPrice.toFixed(2)}</span>`
+      : `<span style="font-family:var(--mono);font-size:11px;color:var(--t2);">$${r.up.toFixed(2)}</span>`;
+
+    tr.innerHTML =
+      `<td class="txn-id">${r.id.replace('TRX-8606-','')}&nbsp;<span class="new-badge">NEW</span></td>` +
+      `<td style="font-family:var(--mono);font-size:10px;color:var(--t2);">${r.ts.replace('2026-0','May ').replace(/-(\d+) /, ' · ').replace(/^May 5-/,'May ')}</td>` +
+      `<td><span class="txn-sku">${r.sku}</span></td>` +
+      `<td style="font-family:var(--mono);font-size:11px;text-align:center;">${r.qty}</td>` +
+      `<td style="font-family:var(--mono);font-size:11px;color:var(--t3);">$${r.up.toFixed(2)}</td>` +
+      `<td>${promoAppliedCell}</td>` +
+      `<td>${promoPriceCell}</td>`;
+    ptbody.appendChild(tr);
+  });
+}
+
+// ─── EXPORT CSV ───────────────────────────────────────────────────────────────
+function exportCSV() {
+  const activePromos = PROMOS.filter(p => selectedIds.has(p.id));
+  if (activePromos.length === 0 && selectedEventRecs.size === 0) {
+    alert('Select at least one recommendation to export.');
+    return;
+  }
+
+  const HEADER = ['Transaction_ID','Timestamp','SKU','Qty','Menu_Price_USD',
+                  'Promo_Applied','Promo_Price_USD','Saving_USD',
+                  'Fulfillment_Time_Sec','Void_Flag','Is_Combo_SKU','Promo_Code','Type'];
+
+  const EXP_COMBO_ANCHORS = new Set([
+    'XL NY Style Pizza (16")', 'Pepperoni Melt (XL)',
+    'Hot Honey Magnifico (L)', 'Pepperoni Magnifico (L)', 'Sausage Magnifico (L)',
+    'Triple Pepperoni Magnifico (L)', 'Ultimate Magnifico (L)', 'All Meat (L)',
+    'Deluxe (L)', 'Garden (L)', 'Hawaiian Chicken (L)', 'The Philly (L)',
+    'White Cheezy (L)', 'The Big Cheese (L)', 'Chicken Fresco (L)', 'The Works (L)',
+    'Pepperoni Melt (L)', 'Grilled Chicken Florentine (L)', 'BarBQ Chicken (L)',
+    'XL Cheese Pizza (16")'
+  ]);
+  const EXP_COMBO_SIDES = new Set([
+    'CheezyBread', 'Pepperoni Bread', 'Breadsticks (5-pc)',
+    'CinnaSquares', 'Chocolate CinnaSquares', 'Pepsi 2 Ltr', 'Mountain Dew 2 Ltr', 'Coke 2 Ltr'
+  ]);
+  const skuMapFor = rowList => {
+    const m = {};
+    rowList.forEach(r => { if (!m[r.id]) m[r.id] = []; m[r.id].push(r.sku || r.SKU); });
+    return id => {
+      const s = m[id] || [];
+      return (s.some(x => EXP_COMBO_ANCHORS.has(x)) && s.some(x => EXP_COMBO_SIDES.has(x))) ? '1' : '0';
+    };
+  };
+  const txnToRow = (r, promoApplied, promoPrice, saving, type) => [
+    r.id, r.ts, r.sku, r.qty,
+    typeof r.dp === 'number' ? r.dp.toFixed(2) : r.dp,
+    promoApplied,
+    typeof promoPrice === 'number' ? promoPrice.toFixed(2) : promoPrice,
+    saving,
+    r.fulft || '', r.void_flag != null ? String(r.void_flag) : '0',
+    '', '', type
+  ];
+
+  // ── SHEET 1: BEFORE — all BASELINE_ROWS for the week, no modifications ────
+  const beforeRows = [HEADER];
+  const isComboAll = skuMapFor(BASELINE_ROWS);
+  const sortedBaseline = [...BASELINE_ROWS].sort((a,b) => a.ts < b.ts ? -1 : 1);
+  sortedBaseline.forEach(r => {
+    beforeRows.push([
+      r.id, r.ts, r.sku, r.qty, r.dp.toFixed(2),
+      '', r.dp.toFixed(2), '0.00',
+      r.fulft || '', r.void_flag != null ? String(r.void_flag) : '0',
+      isComboAll(r.id), '', 'Baseline'
+    ]);
+  });
+
+  // ── SHEET 2: AFTER — transactions modified by selected recommendations ─────
+  const afterRows = [HEADER];
+
+  // Promo-matching existing transactions (modified prices)
+  if (activePromos.length > 0) {
+    const isComboP = skuMapFor(computedPromoRows.map(r => r.txn));
+    computedPromoRows.forEach(({ txn, promoPrice, promoName, promoCost }) => {
+      if (promoPrice === null) return;
+      const saving = promoCost > 0 ? promoCost.toFixed(2) : '0.00';
+      afterRows.push([
+        txn.id, txn.ts, txn.sku, txn.qty, txn.dp.toFixed(2),
+        promoName, promoPrice.toFixed(2), saving,
+        txn.fulft || '', txn.void_flag != null ? String(txn.void_flag) : '0',
+        isComboP(txn.id), promoName, 'Existing · promo applied'
+      ]);
+    });
+
+    // New promo-driven customer transactions
+    const isComboNew = skuMapFor(activeNewTxnRows);
+    activeNewTxnRows.forEach(r => {
+      const promoName = PROMOS.find(p => p.id === r.promoId)?.name || '';
+      const isDisc = r.promoPrice < r.up;
+      const saving = isDisc ? ((r.up - r.promoPrice) * r.qty).toFixed(2) : '0.00';
+      const fulft = r.ts >= '2026-05-23 12' && r.ts <= '2026-05-24 22' ? '380' : '355';
+      afterRows.push([
+        r.id, r.ts, r.sku, r.qty, r.up.toFixed(2),
+        isDisc ? promoName : '', r.promoPrice.toFixed(2), saving,
+        fulft, '0', isComboNew(r.id), isDisc ? promoName : '', 'New · promo customer'
+      ]);
+    });
+  }
+
+  // Event-day transactions + new staffing-captured orders
+  if (selectedEventRecs.has('staffing') || selectedEventRecs.has('menu')) {
+    const TOTAL_REV = 10658, TOTAL_TXNS = 389, STAF_EVENT_SCALE = 4.0;
+    const eventDates = ['2026-05-23', '2026-05-24'];
+
+    eventDates.forEach(date => {
+      const evtConfig = date === '2026-05-23'
+        ? { scfg: { n:'lunch', w:0.30, h:3 }, pct: 47, baseRevDay: 1971 }
+        : { scfg: { n:'dinner', w:0.42, h:5 }, pct: 36, baseRevDay: 1704 };
+      const { scfg, pct, baseRevDay } = evtConfig;
+
+      // Well-staffed projected transactions (real data)
+      if (selectedEventRecs.has('staffing')) {
+        const projRows = STAFFING_PROJECTED_ROWS[date] || [];
+        const isComboProj = skuMapFor(projRows);
+        projRows.forEach(r => {
+          afterRows.push([
+            r.id, r.ts, r.sku, r.qty, r.dp.toFixed(2),
+            '', r.dp.toFixed(2), '0.00',
+            r.fulft || '', '0', isComboProj(r.id), '', `Event · well-staffed · ${date}`
+          ]);
+        });
+
+        // New orders captured by fixing understaffing
+        const txnsDay = Math.round(TOTAL_TXNS * baseRevDay / TOTAL_REV * STAF_EVENT_SCALE);
+        const aTxns   = Math.round(txnsDay * scfg.w);
+        const bTxns   = Math.round(aTxns / (1 + (pct / 100) * 1.60));
+        const newTxnCount = aTxns - bTxns;
+        const projFulft = projRows.length
+          ? Math.round(projRows.reduce((s,r) => s + (r.fulft||354), 0) / projRows.length)
+          : 354;
+        const templates = projRows.length ? projRows : BASELINE_ROWS.filter(r => r.ts.startsWith(date));
+        const startHr   = scfg.n === 'lunch' ? 12 : 17;
+        const dist      = scfg.n === 'lunch' ? POS_STATS.lunchHourDist : POS_STATS.dinnerHourDist;
+
+        let newIdx = 1;
+        dist.forEach((f, i) => {
+          const hrOrders = Math.round(newTxnCount * f);
+          for (let j = 0; j < hrOrders; j++) {
+            const tmpl = templates[(newIdx - 1) % templates.length];
+            const mm = String(Math.floor(j / hrOrders * 59 + 1)).padStart(2,'0');
+            const ts = `${date} ${String(startHr + i).padStart(2,'0')}:${mm}`;
+            const newId = `TRX-8606-${date.replace(/-/g,'')}-NCAP${String(newIdx).padStart(3,'0')}`;
+            afterRows.push([
+              newId, ts, tmpl.sku, tmpl.qty,
+              tmpl.dp.toFixed(2), '', tmpl.dp.toFixed(2), '0.00',
+              projFulft, '0', tmpl.combo ? '1' : '0', '',
+              `New · staffing captured · ${date}`
+            ]);
+            newIdx++;
+          }
+        });
+      }
+    });
+  }
+
+  // ── BUILD AND DOWNLOAD XLSX ───────────────────────────────────────────────
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(beforeRows), 'Before (Full Week)');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(afterRows),  'After (Applied Recs)');
+  XLSX.writeFile(wb, 'marcos_8606_' + new Date().toISOString().slice(0,10) + '.xlsx');
+}
+
+
+// ─── NEW SESSION ──────────────────────────────────────────────────────────────
+function newSession() {
+  selectedIds.clear();
+  selectedEventRecs.clear();
+  computedPromoRows = [];
+  weeklyStats = {weekMatch:0,weekNew:0,weekDisc:0,weekNewRev:0,weekExistingIncrRev:0,weekIncrRev:0};
+  activeNewTxnRows = [];
+  document.querySelectorAll('#recGrid .rec-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.ea-card').forEach(c => {
+    c.classList.remove('selected');
+    const chk = c.querySelector('.ea-chk');
+    if (chk) chk.textContent = '';
+  });
+  // Reset promo data toggle
+  const promoDetailReset = document.getElementById('promoTxnDetail');
+  if (promoDetailReset) promoDetailReset.style.display = 'none';
+  const promoDataChevronReset = document.getElementById('promoDataChevron');
+  if (promoDataChevronReset) promoDataChevronReset.textContent = '∨';
+
+  updateActivateBtn();
+  setScreen(1);
+}
+
+// ─── EVENTS DATA (inline fallback for file:// — fetch overrides when served) ──
+const EVENTS_INLINE = {by_date:[
+  {date:"2026-05-22",shifts:[{shift_name:"dinner",key_signals:["NASCAR Truck Series — North Carolina Lottery 200","MLB – New York Yankees vs Tampa Bay Rays – Game 1"],recommendations:[]}]},
+  {date:"2026-05-23",shifts:[{shift_name:"lunch",key_signals:["Dundee Farmer's Market","MLB – New York Yankees vs Tampa Bay Rays – Game 2"],recommendations:[
+    {action:"Staffing",recommendation:"Add +47% Makeline staffing and +47% Driver scheduling for Dundee Farmer's Market lunch pickup plus MLB game delivery rush."},
+    {action:"Menu Emphasis",recommendation:"Push Pepperoni Magnifico® XL ($23.99), CheezyBread ($6.49), and Pepsi 2 Ltr ($3.50) as the core meal."}
+  ]}]},
+  {date:"2026-05-24",shifts:[
+    {shift_name:"lunch",key_signals:["Orlando Pride at San Diego Wave","NASCAR Cup Series Race","F1 – Canadian Grand Prix 2026 (Race)"],recommendations:[
+      {action:"Menu Emphasis",recommendation:"Push Pepperoni Magnifico® XL ($23.99), XL NY Style Pizza ($17.98), CheezyBread ($6.49), Buffalo Wings 10-pc ($13.99), and Pepsi 2 Ltr ($3.5)."}
+    ]},
+    {shift_name:"dinner",key_signals:["Sunday Funday at Lake Eva Park","Bok Tower Gardens Concert"],recommendations:[
+      {action:"Staffing",recommendation:"Add +36% Makeline staffing and +36% Driver scheduling for dinner, prioritizing 19:00–22:00 delivery flow."},
+      {action:"Menu Emphasis",recommendation:"Push Pepperoni Magnifico® XL ($23.99), CheezyBread ($6.49), and Pepsi 2 Ltr ($3.5) for easy dinner bundles."}
+    ]}
+  ]},
+  {date:"2026-05-25",shifts:[{shift_name:"lunch",key_signals:["MLB – Baltimore Orioles vs Tampa Bay Rays – Game 1","Memorial Day"],recommendations:[]}]}
+]};
+
+// ─── DYNAMIC EVENTS LOADER ───────────────────────────────────────────────────
+async function loadEvents() {
+  const BASE_REV     = [1299, 1556, 1273, 1484, 1971, 1704, 1371];
+  const WEEK_DATES   = ['2026-05-19','2026-05-20','2026-05-21','2026-05-22','2026-05-23','2026-05-24','2026-05-25'];
+  const DAY_NAMES    = ['Tue','Wed','Thu','Fri','Sat','Sun','Mon'];
+  const MONTH_DAYS   = ['May 19','May 20','May 21','May 22','May 23','May 24','May 25'];
+  const SHIFT_HOURS  = { lunch: '12:00–15:00', dinner: '17:00–22:00' };
+  const CARD_COLORS  = ['var(--orange)','var(--g)','var(--purple)','var(--blue)','var(--yellow)'];
+  const DEMAND_RATIO = 0.35;
+
+  let data;
+  try {
+    const res = await fetch('../events_reco.json');
+    data = await res.json();
+  } catch(e) {
+    data = EVENTS_INLINE;
+  }
+
+  // Index JSON by date, keep only May 19-25
+  const byDate = {};
+  data.by_date.forEach(d => { if (WEEK_DATES.includes(d.date)) byDate[d.date] = d; });
+
+  // Compute per-day uplift from staffing % recommendations
+  const uplift = [0, 0, 0, 0, 0, 0, 0];
+  WEEK_DATES.forEach((date, idx) => {
+    const dayData = byDate[date];
+    if (!dayData) return;
+    let maxStaffingPct = 0;
+    const hasSignals = dayData.shifts.some(s => s.key_signals && s.key_signals.length > 0);
+    dayData.shifts.forEach(shift => {
+      shift.recommendations.forEach(rec => {
+        if (rec.action === 'Staffing') {
+          const m = rec.recommendation.match(/\+?(\d+(?:\.\d+)?)\s*%/);
+          if (m) maxStaffingPct = Math.max(maxStaffingPct, parseFloat(m[1]));
+        }
+      });
+    });
+    if (maxStaffingPct > 0) {
+      uplift[idx] = Math.round(BASE_REV[idx] * (maxStaffingPct / 100) * DEMAND_RATIO);
+    }
+  });
+  eventUplift = uplift;
+
+  // Compute per-day menu emphasis uplift — same formula as buildMenuCard
+  const TOTAL_TXNS = 389, TOTAL_REV = 10658;
+  const SCFG_W = { lunch: 0.35, dinner: 0.45 };
+  const mUplift = [0, 0, 0, 0, 0, 0, 0];
+  WEEK_DATES.forEach((date, idx) => {
+    const dayData = byDate[date];
+    if (!dayData) return;
+    const brd = BASE_REV[idx];
+    const txnsDay = Math.round(TOTAL_TXNS * brd / TOTAL_REV);
+    if (txnsDay === 0) return;
+    const avgTkt = brd / txnsDay;
+    const bTkt   = avgTkt * 0.76;
+    const delta  = avgTkt - bTkt;
+    dayData.shifts.forEach(shift => {
+      const hasMenu = shift.recommendations.some(r => r.action === 'Menu Emphasis');
+      if (!hasMenu) return;
+      const shiftTxns = Math.round(txnsDay * (SCFG_W[shift.shift_name] || 0.40));
+      mUplift[idx] += Math.round(delta * shiftTxns);
+    });
+  });
+  menuEventUplift = mUplift;
+  window._loadedEventsData = data;  // store for exportCSV
+
+  renderEventPlaybook(data, uplift);
+
+  // Build chip text from recommendation
+  function chipText(action, rec) {
+    if (action === 'Staffing') {
+      const m = rec.match(/\+?(\d+(?:\.\d+)?)\s*%/);
+      return m ? `+${m[1]}% Makeline &amp; Driver` : rec.slice(0, 45);
+    }
+    if (action === 'Menu Emphasis') {
+      const items = rec.replace(/^Push\s+/i, '').replace(/\s*\(\$[\d.]+\)/g, '').replace(/\s+for\s+.*/i, '').replace(/\s+as.*$/i, '');
+      const parts = items.split(/,\s*/);
+      return 'Menu: ' + parts.slice(0, 3).join(', ') + (parts.length > 3 ? '…' : '');
+    }
+    if (action === 'Inventory') {
+      const m = rec.match(/(\d+(?:\.\d+)?)\s*%/);
+      return m ? `+${m[1]}% Inventory` : rec.slice(0, 45);
+    }
+    return rec.slice(0, 45);
+  }
+
+  // Render cards — one per date that has events in the week
+  let colorIdx = 0;
+  const cards = WEEK_DATES.map((date, dayIdx) => {
+    const dayData = byDate[date];
+    if (!dayData) return null;
+    const signals = [...new Set(dayData.shifts.flatMap(s => s.key_signals))];
+    if (!signals.length) return null;
+
+    const color = CARD_COLORS[colorIdx++ % CARD_COLORS.length];
+
+    // Collect shifts and their labels
+    const shiftNames = [...new Set(dayData.shifts.map(s => s.shift_name))];
+    const shiftStr = shiftNames.length === 2
+      ? 'Lunch 12:00–15:00 · Dinner 17:00–22:00'
+      : shiftNames.map(sn => sn.charAt(0).toUpperCase() + sn.slice(1) + ' ' + SHIFT_HOURS[sn]).join(' · ');
+
+    // Truncate signal names for display
+    const displaySignals = signals.slice(0, 3).join(' · ') + (signals.length > 3 ? ' …' : '');
+
+    return `
+      <div class="event-card">
+        <div style="background:${color};position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:2px 0 0 2px;"></div>
+        <div class="event-date-badge">${MONTH_DAYS[dayIdx]} · ${DAY_NAMES[dayIdx]}</div>
+        <div class="event-name">${displaySignals}</div>
+        <div class="event-shift">SHIFT: ${shiftStr.toUpperCase()}</div>
+      </div>`;
+  }).filter(Boolean);
+
+  const grid = document.getElementById('eventGrid');
+  if (grid) grid.innerHTML = cards.join('');
+}
+
+// ─── EVENT PLAYBOOK RENDERER ─────────────────────────────────────────────────
+function fmtTime(secs) {
+  const m = Math.floor(secs / 60), s = secs % 60;
+  return `${m}m ${s.toString().padStart(2, '0')}s`;
+}
+function monthDay(d) {
+  const M = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${M[parseInt(d.slice(5,7))-1]} ${parseInt(d.slice(8))}`;
+}
+
+// ── POS Tab helper ────────────────────────────────────────────────────────────
+function showPosTab(cardId, tab) {
+  ['b','a'].forEach(t => {
+    const btn = document.getElementById(`postab-${cardId}-${t}`);
+    const con = document.getElementById(`postabcon-${cardId}-${t}`);
+    if (btn) btn.classList.toggle('active', t === tab);
+    if (con) con.classList.toggle('active', t === tab);
+  });
+}
+
+function buildStaffingCard(date, scfg, pct, baseRevDay, signals) {
+  // Event-day scale: events drive ~4× average daily volume; "before" = constrained by understaffing
+  const STAF_EVENT_SCALE = 4.0;
+  const TOTAL_REV = 10658, TOTAL_TXNS = 389;
+  const txnsDay    = Math.round(TOTAL_TXNS * baseRevDay / TOTAL_REV * STAF_EVENT_SCALE);
+  const aTxns      = Math.round(txnsDay * scfg.w);           // full event demand captured with staffing
+  const revPerTxn  = (baseRevDay * STAF_EVENT_SCALE) / txnsDay; // avg ticket unchanged
+  const constraintRatio = 1 + (pct / 100) * 1.60;           // understaffing constraint multiplier
+  const bTxns      = Math.round(aTxns / constraintRatio);    // constrained throughput when understaffed
+  const aOrdHr     = Math.max(1, Math.round(aTxns / scfg.h));
+  const bOrdHr     = Math.max(1, Math.round(bTxns / scfg.h));
+  const ordPct     = Math.round((aOrdHr - bOrdHr) / bOrdHr * 100);
+  const aRevHr     = Math.round(aOrdHr * revPerTxn);
+  const bRevHr     = Math.round(bOrdHr * revPerTxn);
+  const revPct     = ordPct;
+  // ── Fulfillment times from real POS data ─────────────────────────────────────
+  // bFulfill: real avg across all event-window rows in actual CSV (n=190 rows)
+  const bFulfill   = POS_STATS.eventFulftAvg;   // 497s — real
+  // aFulfill: real avg from STAFFING_PROJECTED_ROWS for this date (actual well-staffed shift data)
+  const projRows   = (STAFFING_PROJECTED_ROWS[date] || []);
+  const aFulfill   = projRows.length
+    ? Math.round(projRows.reduce((s,r) => s + (r.fulft||354), 0) / projRows.length)
+    : POS_STATS.normalFulftAvg || 354;
+  const fPct       = Math.round((aFulfill - bFulfill) / bFulfill * 100);
+  // ── Void rate from real POS data ─────────────────────────────────────────────
+  // 13 voided transactions / 389 total in May 19-25 week = 3.3%
+  const bVoidRate  = POS_STATS.voidRate;         // 3.3 — real
+  const aVoidRate  = Math.max(0.5, Math.round((bVoidRate - pct * 0.06) * 10) / 10);
+  const voidDelta  = Math.round((aVoidRate - bVoidRate) * 10) / 10;
+  const bullets = signals.slice(0,3).map(s =>
+    `<div class="ep-signal-item"><span class="ep-signal-dot"></span>${s}</div>`).join('');
+
+  // ── Hourly distribution from real transaction timestamps ─────────────────────
+  // lunchHourDist: actual hourly share of May 23 12-15h transactions [hr12, hr13, hr14]
+  // dinnerHourDist: actual hourly share of May 24 17-22h transactions [hr17..hr21]
+  const dist     = scfg.h === 3 ? POS_STATS.lunchHourDist : POS_STATS.dinnerHourDist;
+  const startHr  = scfg.n === 'lunch' ? 12 : 17;
+  const hrLabel  = h => { const f = h > 12 ? h-12 : h; const t = (h+1) > 12 ? (h+1)-12 : (h+1); return `${f}–${t} PM`; };
+
+  const bHours = dist.map((f, i) => {
+    const orders = Math.round(bTxns * f);
+    return { hr: startHr + i, orders, rev: Math.round(orders * revPerTxn),
+             ft: Math.round(bFulfill * (i===1?1.034:i===0?0.966:1.012)),
+             voids: Math.max(0, Math.round(orders * bVoidRate / 100)) };
+  });
+  const aHours = dist.map((f, i) => {
+    const orders = Math.round(aTxns * f);
+    return { hr: startHr + i, orders, rev: Math.round(orders * revPerTxn),
+             ft: Math.round(aFulfill * (i===1?1.034:i===0?0.966:1.012)),
+             voids: Math.max(0, Math.round(orders * aVoidRate / 100)) };
+  });
+  const bTotOrders = bHours.reduce((s,r)=>s+r.orders,0);
+  const bTotRev    = bHours.reduce((s,r)=>s+r.rev,0);
+  const bTotVoids  = bHours.reduce((s,r)=>s+r.voids,0);
+  const aTotOrders = aHours.reduce((s,r)=>s+r.orders,0);
+  const aTotRev    = aHours.reduce((s,r)=>s+r.rev,0);
+  const aTotVoids  = aHours.reduce((s,r)=>s+r.voids,0);
+
+  const hrRow = (r, cls='') => `<tr class="${cls}">
+    <td>${hrLabel(r.hr)}</td><td class="r">${r.orders}</td>
+    <td class="r">$${r.rev}</td><td class="r">${fmtTime(r.ft)}</td><td class="r">${r.voids}</td></tr>`;
+
+  const cardId = `stf-${date}-${scfg.n}`;
+
+  return `<div class="ep-rec-card">
+    <div class="ep-rec-header">
+      <div class="ep-rec-title">Add +${pct}% Makeline &amp; Driver staffing · ${monthDay(date)} · ${scfg.label}</div>
+      <span class="ep-badge staffing">Staffing</span>
+    </div>
+    <div class="ep-signal"><div class="ep-signal-label">Signal Trigger</div>${bullets}
+    </div>
+    <div class="ep-cmp">
+      <div class="ep-cmp-col">
+        <div class="ep-cmp-label bl">⊙ Before · Understaffed</div>
+        <div class="ep-mrow"><span class="ep-ml">Orders/hr</span><span class="ep-mv bad">${bOrdHr}</span></div>
+        <div class="ep-mrow"><span class="ep-ml">Revenue/hr</span><span class="ep-mv bad">$${bRevHr}</span></div>
+        <div class="ep-mrow"><span class="ep-ml">Avg fulfillment time</span><span class="ep-mv bad">${fmtTime(bFulfill)}</span></div>
+        <div class="ep-mrow"><span class="ep-ml">Void + refund rate</span><span class="ep-mv bad">${bVoidRate}%</span></div>
+      </div>
+      <div class="ep-cmp-col">
+        <div class="ep-cmp-label af">✓ After · Rec Followed</div>
+        <div class="ep-mrow"><span class="ep-ml">Orders/hr</span><span class="ep-mv good">${aOrdHr}</span><span class="ep-delta pos">+${ordPct}%</span></div>
+        <div class="ep-mrow"><span class="ep-ml">Revenue/hr</span><span class="ep-mv good">$${aRevHr}</span><span class="ep-delta pos">+${revPct}%</span></div>
+        <div class="ep-mrow"><span class="ep-ml">Avg fulfillment time</span><span class="ep-mv good">${fmtTime(aFulfill)}</span><span class="ep-delta neg">${fPct}%</span></div>
+        <div class="ep-mrow"><span class="ep-ml">Void + refund rate</span><span class="ep-mv good">${aVoidRate}%</span><span class="ep-delta neg">${voidDelta}pp</span></div>
+      </div>
+    </div>
+    <div class="pos-data-wrap">
+      <button class="ep-toggle-btn" onclick="toggleDetail('${cardId}-posdata')">View POS data →</button>
+      <div id="${cardId}-posdata" style="display:none;margin-top:10px;">
+        <div class="pos-tab-bar">
+          <button class="pos-tab active" id="postab-${cardId}-b" onclick="showPosTab('${cardId}','b')">Before · understaffed</button>
+          <button class="pos-tab" id="postab-${cardId}-a" onclick="showPosTab('${cardId}','a')">After · rec followed</button>
+        </div>
+        <div class="pos-tab-content active" id="postabcon-${cardId}-b">
+          <div style="overflow-x:auto;">
+            <table class="pos-tbl">
+              <thead><tr><th>Hour</th><th class="r">Orders</th><th class="r">Revenue</th><th class="r">Avg Fulfillment</th><th class="r">Voids</th></tr></thead>
+              <tbody>
+                ${bHours.map(r => hrRow(r)).join('')}
+                <tr class="pos-total"><td>Total ${scfg.tl}</td><td class="r">${bTotOrders}</td><td class="r">$${bTotRev}</td><td class="r">—</td><td class="r">${bTotVoids} (${bVoidRate}%)</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="pos-tab-content" id="postabcon-${cardId}-a">
+          <div style="overflow-x:auto;">
+            <table class="pos-tbl">
+              <thead><tr><th>Hour</th><th class="r">Orders</th><th class="r">Revenue</th><th class="r">Avg Fulfillment</th><th class="r">Voids</th></tr></thead>
+              <tbody>
+                ${aHours.map(r => hrRow(r)).join('')}
+                <tr class="pos-total"><td>Total ${scfg.tl}</td>
+                  <td class="r">${aTotOrders} <span class="pos-delta up">+${ordPct}%</span></td>
+                  <td class="r">$${aTotRev} <span class="pos-delta up">+${revPct}%</span></td>
+                  <td class="r">—</td><td class="r">${aTotVoids} (${aVoidRate}%)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function buildMenuCard(date, scfg, baseRevDay, signals) {
+  const TOTAL_REV = 10658, TOTAL_TXNS = 389;
+  const txnsDay   = Math.round(TOTAL_TXNS * baseRevDay / TOTAL_REV);
+  const shiftTxns = Math.round(txnsDay * scfg.w);
+  const compLabel = scfg.n === 'lunch' ? 'Lunches' : 'Evenings';
+  const bullets = signals.slice(0,2).map(s =>
+    `<div class="ep-signal-item"><span class="ep-signal-dot" style="background:var(--g)"></span>${s}</div>`).join('');
+
+  // ── "Before" — all values from POS_STATS (real event-window transaction data) ─
+  const bComboR  = POS_STATS.eventComboRate;    // 0.262 — real
+  const bSingleR = POS_STATS.eventSingleRate;   // 0.062 — real
+  const bMultiR  = 1 - bComboR - bSingleR;
+  const bSingle  = Math.round(shiftTxns * bSingleR);
+  const bMulti   = Math.round(shiftTxns * bMultiR);
+  const bCombo   = shiftTxns - bSingle - bMulti;
+  const bTkt     = parseFloat(((bSingle * POS_STATS.avgBasketSingle +
+                                bMulti  * POS_STATS.avgBasketMulti  +
+                                bCombo  * POS_STATS.avgBasketCombo) / shiftTxns).toFixed(2));
+  const bComboDisp  = Math.round(bComboR * 100);
+  const bItemsDisp  = POS_STATS.eventAvgItems;  // 2.9 — real
+  const bDiscDisp   = POS_STATS.eventDiscRate;  // 72 — real
+
+  // ── "After" — best-day combo rate from full POS history as achievable target ──
+  // Best historical day: 43.5% on 2026-05-11 (real). Used as target when staff
+  // actively feature combos. Single-item share unchanged; multi shifts to combo.
+  const aComboR  = POS_STATS.bestDayComboRate;  // 0.435 — real best day
+  const aSingleR = bSingleR;
+  const aMultiR  = 1 - aComboR - aSingleR;
+  const aSingle  = Math.round(shiftTxns * aSingleR);
+  const aMulti   = Math.round(shiftTxns * aMultiR);
+  const aCombo   = shiftTxns - aSingle - aMulti;
+  const avgTkt   = parseFloat(((aSingle * POS_STATS.avgBasketSingle +
+                                aMulti  * POS_STATS.avgBasketMulti  +
+                                aCombo  * POS_STATS.avgBasketCombo) / shiftTxns).toFixed(2));
+  // Avg items: staff upsell adds ~0.5 items per non-single order on average
+  const aItemsDisp = Math.round((bItemsDisp + (aComboR - bComboR) * 2) * 10) / 10;
+  const aDiscDisp  = Math.round(bDiscDisp + (aComboR - bComboR) * 20);
+  const aComboDisp = Math.round(aComboR * 100);
+  const comboPP    = aComboDisp - bComboDisp;
+  const tktLift    = Math.round((avgTkt - bTkt) / bTkt * 100);
+  const incrRev    = Math.round((avgTkt - bTkt) * shiftTxns);
+
+  const pct = n => Math.round(n/shiftTxns*100) + '%';
+  const mkTypeRow = (type, count, pctStr, basket, delta='') =>
+    `<tr><td><span class="pos-type-chip">${type}</span></td>
+     <td class="r">${count}</td><td class="r">${pctStr}</td>
+     <td class="r">$${basket.toFixed(2)}${delta}</td></tr>`;
+
+  const cardId = `menu-${date}-${scfg.n}`;
+
+  return `<div class="ep-rec-card">
+    <div class="ep-rec-header">
+      <div class="ep-rec-title">Feature XL combo on boards &amp; kiosks · ${monthDay(date)} · ${scfg.label}</div>
+      <span class="ep-badge menu">Menu Emphasis</span>
+    </div>
+    <div class="ep-signal"><div class="ep-signal-label">Signal Trigger</div>${bullets}
+    </div>
+    <div class="ep-cmp">
+      <div class="ep-cmp-col">
+        <div class="ep-cmp-label bl">⊙ Before · Non-Featured ${compLabel}</div>
+        <div class="ep-mrow"><span class="ep-ml">Avg basket value</span><span class="ep-mv bad">$${bTkt.toFixed(2)}</span></div>
+        <div class="ep-mrow"><span class="ep-ml">Combo SKU attach rate</span><span class="ep-mv bad">${bComboDisp}%</span></div>
+        <div class="ep-mrow"><span class="ep-ml">Avg items/order</span><span class="ep-mv bad">${bItemsDisp}</span></div>
+        <div class="ep-mrow"><span class="ep-ml">Orders with discount</span><span class="ep-mv">${bDiscDisp}%</span></div>
+      </div>
+      <div class="ep-cmp-col">
+        <div class="ep-cmp-label af">✓ After · Menu Emphasis Active</div>
+        <div class="ep-mrow"><span class="ep-ml">Avg basket value</span><span class="ep-mv good">$${avgTkt.toFixed(2)}</span><span class="ep-delta pos">+${tktLift}%</span></div>
+        <div class="ep-mrow"><span class="ep-ml">Combo SKU attach rate</span><span class="ep-mv good">${aComboDisp}%</span><span class="ep-delta pos">+${comboPP}pp</span></div>
+        <div class="ep-mrow"><span class="ep-ml">Avg items/order</span><span class="ep-mv good">${aItemsDisp}</span><span class="ep-delta pos">+${Math.round((aItemsDisp-bItemsDisp)*10)/10}</span></div>
+        <div class="ep-mrow"><span class="ep-ml">Orders with discount</span><span class="ep-mv">${aDiscDisp}%</span><span class="ep-delta tag">~same</span></div>
+      </div>
+    </div>
+    <div class="pos-data-wrap">
+      <button class="ep-toggle-btn" onclick="toggleDetail('${cardId}-posdata')">View POS data →</button>
+      <div id="${cardId}-posdata" style="display:none;margin-top:10px;">
+        <div class="pos-tab-bar">
+          <button class="pos-tab active" id="postab-${cardId}-b" onclick="showPosTab('${cardId}','b')">Before · default menu</button>
+          <button class="pos-tab" id="postab-${cardId}-a" onclick="showPosTab('${cardId}','a')">After · combos featured</button>
+        </div>
+        <div class="pos-tab-content active" id="postabcon-${cardId}-b">
+          <div style="overflow-x:auto;">
+            <table class="pos-tbl">
+              <thead><tr><th>Order Type</th><th class="r">Count</th><th class="r">% of Orders</th><th class="r">Avg Basket</th></tr></thead>
+              <tbody>
+                ${mkTypeRow('Single item only', bSingle, pct(bSingle), POS_STATS.avgBasketSingle)}
+                ${mkTypeRow('Multi-item, no combo', bMulti, pct(bMulti), POS_STATS.avgBasketMulti)}
+                ${mkTypeRow('With combo SKU', bCombo, pct(bCombo), POS_STATS.avgBasketCombo)}
+                <tr class="pos-total"><td>All orders</td><td class="r">${shiftTxns}</td><td class="r">100%</td><td class="r">$${bTkt.toFixed(2)}</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="pos-tab-content" id="postabcon-${cardId}-a">
+          <div style="overflow-x:auto;">
+            <table class="pos-tbl">
+              <thead><tr><th>Order Type</th><th class="r">Count</th><th class="r">% of Orders</th><th class="r">Avg Basket</th></tr></thead>
+              <tbody>
+                ${mkTypeRow('Single item only', aSingle, pct(aSingle), POS_STATS.avgBasketSingle)}
+                ${mkTypeRow('Multi-item, no combo', aMulti, pct(aMulti), POS_STATS.avgBasketMulti)}
+                ${mkTypeRow('With combo SKU', aCombo, `${aComboDisp}% <span class="pos-delta up">+${comboPP}pp</span>`, POS_STATS.avgBasketCombo)}
+                <tr class="pos-total"><td>All orders</td><td class="r">${shiftTxns}</td><td class="r">100%</td><td class="r">$${avgTkt.toFixed(2)} <span class="pos-delta up">+$${(avgTkt-bTkt).toFixed(2)}</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function buildInventoryCard(date, scfg, pct, baseRevDay, signals) {
+  const AVG_TKT = parseFloat((10658 / 389).toFixed(2));
+  const bDep = 2.3, bStock = 38, bDel = 9, bAvail = 63;
+  const lostRev = Math.round(bDel * AVG_TKT * 0.36);
+  const readyBy = scfg.n === 'lunch' ? '10 AM' : '3 PM';
+  const peakAt  = scfg.n === 'lunch' ? '2 PM' : '8 PM';
+  const bullets = signals.slice(0,2).map(s =>
+    `<div class="ep-signal-item"><span class="ep-signal-dot" style="background:var(--yellow)"></span>${s}</div>`).join('');
+  return `<div class="ep-rec-card">
+    <div class="ep-rec-header">
+      <div class="ep-rec-title">Pre-stage DOUGH, CHEESE, PEPPERONI/MEATS, WINGS · ${monthDay(date)} · Ready by ${readyBy}</div>
+      <span class="ep-badge inventory">Inventory</span>
+    </div>
+    <div class="ep-signal"><div class="ep-signal-label">Signal Trigger</div>${bullets}
+    </div>
+    <div class="ep-cmp">
+      <div class="ep-cmp-col">
+        <div class="ep-cmp-label bl">⊙ Before — Without Pre-Staging (POS History)</div>
+        <div class="ep-mrow"><span class="ep-ml">Dough depletions/event</span><span class="ep-mv bad">${bDep}</span></div>
+        <div class="ep-mrow"><span class="ep-ml">Avg stockout window</span><span class="ep-mv bad">${bStock} min</span></div>
+        <div class="ep-mrow"><span class="ep-ml">Orders delayed &gt;5 min</span><span class="ep-mv bad">${bDel}</span></div>
+        <div class="ep-mrow"><span class="ep-ml">Items available at ${peakAt}</span><span class="ep-mv bad">${bAvail}%</span></div>
+      </div>
+      <div class="ep-cmp-col">
+        <div class="ep-cmp-label af">✓ After — Pre-Staged by ${readyBy}</div>
+        <div class="ep-mrow"><span class="ep-ml">Dough depletions/event</span><span class="ep-mv good">0</span><span class="ep-delta tag">-${bDep}</span></div>
+        <div class="ep-mrow"><span class="ep-ml">Avg stockout window</span><span class="ep-mv good">0 min</span><span class="ep-delta neg">-${bStock} min</span></div>
+        <div class="ep-mrow"><span class="ep-ml">Orders delayed &gt;5 min</span><span class="ep-mv good">0</span><span class="ep-delta neg">-${bDel}</span></div>
+        <div class="ep-mrow"><span class="ep-ml">Items available at ${peakAt}</span><span class="ep-mv good">97%</span><span class="ep-delta pos">+${97-bAvail}pp</span></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function buildBriefingCard(data, uplift) {
+  const BASE_REV = [1299,1556,1273,1484,1971,1704,1371];
+  const DATES    = ['2026-05-19','2026-05-20','2026-05-21','2026-05-22','2026-05-23','2026-05-24','2026-05-25'];
+  const DLABELS  = ['TUE May 19','WED May 20','THU May 21','FRI May 22','SAT May 23','SUN May 24','MON May 25'];
+  const byDate   = {};
+  data.by_date.forEach(d => { if (DATES.includes(d.date)) byDate[d.date] = d; });
+
+  const rows = DATES.map((date, i) => {
+    const dd = byDate[date], u = uplift[i];
+    if (!dd) return `<div class="ep-brief-day"><div class="ep-brief-date">${DLABELS[i]}</div><div class="ep-brief-events">No events detected. Baseline staffing and inventory.</div><div class="ep-brief-impact"><span class="ep-impact-chip low">No action</span></div></div>`;
+    const sigs = [...new Set(dd.shifts.flatMap(s => s.key_signals))];
+    if (!sigs.length) return `<div class="ep-brief-day"><div class="ep-brief-date">${DLABELS[i]}</div><div class="ep-brief-events">No events detected. Baseline staffing and inventory.</div><div class="ep-brief-impact"><span class="ep-impact-chip low">No action</span></div></div>`;
+    const allRecs = dd.shifts.flatMap(s => s.recommendations);
+    const staffR  = allRecs.find(r => r.action === 'Staffing');
+    const staffPct = staffR ? (staffR.recommendation.match(/\+?(\d+(?:\.\d+)?)\s*%/)||[,0])[1] : 0;
+    const hasMenu  = allRecs.some(r => r.action === 'Menu Emphasis');
+    const highImp  = !!staffR || u > 0;
+    const acts = [];
+    if (staffR) acts.push(`+${staffPct}% Makeline &amp; Driver`);
+    if (hasMenu) acts.push('Push XL combos');
+    const actStr = acts.length ? '<br>' + acts.join(' · ') : '';
+    const sigStr = sigs.slice(0,2).join(' · ');
+    const impact = highImp
+      ? `<span class="ep-impact-chip high">High impact</span>${u > 0 ? `<span class="ep-impact-chip" style="background:rgba(139,111,255,.15);color:var(--purple);margin-top:3px;">+$${u} est. uplift</span>` : ''}`
+      : `<span class="ep-impact-chip med">Monitor</span>`;
+    return `<div class="ep-brief-day"><div class="ep-brief-date">${DLABELS[i]}</div><div class="ep-brief-events"><b>${highImp?'⚡ ':''}${sigStr}</b>${actStr}</div><div class="ep-brief-impact">${impact}</div></div>`;
+  }).join('');
+
+  return `<div class="ep-rec-card">
+    <div class="ep-rec-header">
+      <div class="ep-rec-title">Weekly Event Briefing · May 19–25, 2026 · Store #8606 Dundee</div>
+      <span class="ep-badge briefing">Daily Briefing</span>
+    </div>
+    <div style="margin-top:4px;">${rows}</div>
+  </div>`;
+}
+
+function renderEventPlaybook(data, uplift) {
+  const BASE_REV = [1299,1556,1273,1484,1971,1704,1371];
+  const DATES    = ['2026-05-19','2026-05-20','2026-05-21','2026-05-22','2026-05-23','2026-05-24','2026-05-25'];
+  const SCFG = {
+    lunch:  { label:'Lunch 12–3 PM',  n:'lunch',  tl:'12–3 PM',  w:0.30, h:3 },
+    dinner: { label:'Dinner 5–9 PM',  n:'dinner', tl:'5–9 PM',   w:0.42, h:4 }
+  };
+  const byDate = {};
+  data.by_date.forEach(d => { if (DATES.includes(d.date)) byDate[d.date] = d; });
+
+  const staffCards=[], menuCards=[], invCards=[];
+  DATES.forEach((date, idx) => {
+    const dd = byDate[date]; if (!dd) return;
+    const brd = BASE_REV[idx];
+    dd.shifts.forEach(shift => {
+      const sc = SCFG[shift.shift_name]; if (!sc) return;
+      const sigs = shift.key_signals || [];
+      const staffR = shift.recommendations.find(r => r.action === 'Staffing');
+      if (staffR) {
+        const m = staffR.recommendation.match(/\+?(\d+(?:\.\d+)?)\s*%/);
+        if (m) {
+          const pct = parseFloat(m[1]);
+          staffCards.push(buildStaffingCard(date, sc, pct, brd, sigs));
+          invCards.push(buildInventoryCard(date, sc, pct, brd, sigs));
+        }
+      }
+      const menuR = shift.recommendations.find(r => r.action === 'Menu Emphasis');
+      if (menuR) menuCards.push(buildMenuCard(date, sc, brd, sigs));
+    });
+  });
+
+  // Populate Screen 3 ep-content divs
+  const none = msg => `<div style="padding:20px 16px;color:var(--t3);font-family:var(--mono);font-size:11px;">${msg}</div>`;
+  document.getElementById('epcontent-staffing').innerHTML = staffCards.length ? staffCards.join('') : none('No staffing recommendations this week.');
+  document.getElementById('epcontent-menu').innerHTML     = menuCards.length  ? menuCards.join('')  : none('No menu emphasis recommendations this week.');
+
+  // Build Screen 3 tab nav
+  const tabsEl = document.getElementById('epTabsS3');
+  if (tabsEl) {
+    const tabDefs = [
+      { key:'staffing', label:'Staffing',     icon:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="2.5"/><path d="M3 14c0-3.3 2.2-5 5-5s5 1.7 5 5"/></svg>',          show: staffCards.length > 0 },
+      { key:'menu',     label:'Menu emphasis', icon:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="8,2 9.8,6.2 14.5,6.5 11,9.7 12.1,14.4 8,11.9 3.9,14.4 5,9.7 1.5,6.5 6.2,6.2"/></svg>', show: menuCards.length > 0 },
+      { key:'promos',   label:'Promotions',    icon:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="12" height="8" rx="1.5"/><path d="M5 5V4a3 3 0 016 0v1"/><line x1="8" y1="8" x2="8" y2="11"/><line x1="6.5" y1="9.5" x2="9.5" y2="9.5"/></svg>', show: true }
+    ];
+    tabsEl.innerHTML = tabDefs.filter(t => t.show).map(t =>
+      `<button class="ep-tab" style="display:none;" data-ep="${t.key}" onclick="showEpTab('${t.key}')">${t.icon} ${t.label}</button>`
+    ).join('');
+  }
+
+  // Build Screen 1 selectable action cards
+  const TOTAL_EVT_UPLIFT = Math.round(eventUplift.reduce((a,b)=>a+b,0));
+  const menuIncrRev = menuCards.length
+    ? menuCards.reduce((sum, card) => {
+        const m = card.match(/\$(\d+)\s+incremental revenue/);
+        return sum + (m ? parseInt(m[1]) : 0);
+      }, 0)
+    : 0;
+
+  const staffDates = [...new Set(
+    DATES.filter((_, i) => {
+      const dd = byDate[_]; if (!dd) return false;
+      return dd.shifts.some(s => s.recommendations.some(r => r.action === 'Staffing'));
+    }).map(d => monthDay(d))
+  )].join(' & ');
+
+  const menuDates = [...new Set(
+    DATES.filter((_, i) => {
+      const dd = byDate[_]; if (!dd) return false;
+      return dd.shifts.some(s => s.recommendations.some(r => r.action === 'Menu Emphasis'));
+    }).map(d => monthDay(d))
+  )].join(' & ');
+
+  const actionCards = [];
+  if (staffCards.length) {
+    // Gather staffing % lines for detail
+    const staffLines = [];
+    DATES.forEach(date => {
+      const dd = byDate[date]; if (!dd) return;
+      dd.shifts.forEach(shift => {
+        const r = shift.recommendations.find(r => r.action === 'Staffing');
+        if (r) {
+          const m = r.recommendation.match(/\+?(\d+(?:\.\d+)?)\s*%/);
+          if (m) staffLines.push(`+${m[1]}% ${SCFG[shift.shift_name]?.label || shift.shift_name} (${monthDay(date)})`);
+        }
+      });
+    });
+    actionCards.push(`
+      <div class="ea-card" id="eacard-staffing" onclick="toggleEventRec('staffing')">
+        <div class="ea-icon staffing"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--blue)" stroke-width="1.5"><circle cx="8" cy="5" r="2.5"/><path d="M3 14c0-3.3 2.2-5 5-5s5 1.7 5 5"/></svg></div>
+        <div class="ea-body">
+          <div class="ea-title">Staffing Adjustment</div>
+          <div class="ea-details">${staffLines.join('<br>')}</div>
+        </div>
+        <div class="ea-chk"></div>
+      </div>`);
+  }
+  if (menuCards.length) {
+    actionCards.push(`
+      <div class="ea-card" id="eacard-menu" onclick="toggleEventRec('menu')">
+        <div class="ea-icon menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--g)" stroke-width="1.5"><polygon points="8,2 9.8,6.2 14.5,6.5 11,9.7 12.1,14.4 8,11.9 3.9,14.4 5,9.7 1.5,6.5 6.2,6.2"/></svg></div>
+        <div class="ea-body">
+          <div class="ea-title">Menu Emphasis — Feature XL Combos</div>
+          <div class="ea-details">Boards &amp; kiosks · ${menuDates}</div>
+        </div>
+        <div class="ea-chk"></div>
+      </div>`);
+  }
+  const grid = document.getElementById('eventActionGrid');
+  if (grid) grid.innerHTML = actionCards.join('');
+}
+
+function showEpTab(tabName) {
+  document.querySelectorAll('.ep-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.ep-content').forEach(c => c.classList.remove('active'));
+  const tabBtn = document.querySelector(`.ep-tab[data-ep="${tabName}"]`);
+  const tabContent = document.getElementById(`epcontent-${tabName}`);
+  if (tabBtn) tabBtn.classList.add('active');
+  if (tabContent) tabContent.classList.add('active');
+}
+
+// Init
+updateActivateBtn();
+loadEvents();
+</script>
+</body>
+</html>
