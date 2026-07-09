@@ -20,8 +20,8 @@ The primary tool for selecting and analyzing weekly promotions against a baselin
 |----|------|-------------|
 | P1 | XL NY Pizza + 2 Drinks | Bundle: XL New Yorker pizza + up to 2 fountain drinks at a combined discount |
 | P2 | L Pizza + CheezyBread | Bundle: Large pizza + CheezyBread combo at $17.99 |
-| P3 | Chocolate Delight Trio | Combo of 3 dessert items at a fixed price |
-| P4 | Choose Your Side $4.99 | Any qualifying side item capped at $4.99 |
+| P3 | Chocolate Delight Trio | Double Chocolate Brownie at a fixed price of $6.99 (counters Domino's dessert deal) |
+| P4 | Choose Your Side $4.99 | Any qualifying side/dessert item (CheezyBread, Pepperoni Bread, Breadsticks, CinnaSquares, etc.) capped at $4.99 |
 | P6 | 3 Dip Cups $1.49 | Three dip cups for $1.49 |
 
 **Key logic:**
